@@ -16,7 +16,6 @@ public class LEDController {
 	private final LEDPattern red = LEDPattern.solid(Color.kGreen)
 	.atBrightness(Dimensionless.ofRelativeUnits(LED_BRIGHTNESS_PERCENT, Percent)); 
 
-	
 	private AddressableLEDBuffer ledBuffer;
 	private AddressableLED led;
 	
@@ -34,7 +33,6 @@ public class LEDController {
 
         updateLEDS();
     }
-
 
     public void updateLEDS() {
         

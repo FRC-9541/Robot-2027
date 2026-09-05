@@ -14,7 +14,6 @@ import frc.robot.lighting.LEDController;
 
 import static frc.robot.Constants.OperatingConstants.*;
 
-
 /**
 * The methods in this class are called automatically corresponding to each
 * mode, as described in
@@ -48,7 +47,7 @@ public class Robot extends TimedRobot {
 		CameraServer.startAutomaticCapture();
 		
 		// instantiate the driveTrain
-		// TODO: have control scheme actually match chooser, right now the value just gets set
+		// TODO: have control mode actually match chooser, right now the value just gets set
 		driveTrain = new DriveTrain(false);
 
 		ledController = new LEDController(92);
@@ -70,6 +69,7 @@ public class Robot extends TimedRobot {
 	*/
 	@Override
 	public void robotPeriodic() {
+		driveTrain.robotPeriodic();
 	}
 	
 	/**
