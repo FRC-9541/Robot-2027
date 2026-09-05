@@ -4,33 +4,15 @@
 
 package frc.robot;
 
-import com.revrobotics.PersistMode;
-import com.revrobotics.ResetMode;
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
-import com.revrobotics.spark.config.SparkMaxConfig;
-
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.units.measure.Dimensionless;
-import edu.wpi.first.wpilibj.AddressableLED;
-import edu.wpi.first.wpilibj.AddressableLEDBuffer;
-import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.TimedRobot;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.XboxController;
-import edu.wpi.first.wpilibj.LEDPattern.GradientType;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.util.Color;
 import frc.robot.drive.DriveTrain;
+import frc.robot.lighting.LEDController;
 
-import static edu.wpi.first.units.Units.Percent;
-import static edu.wpi.first.units.Units.Second;
-import static edu.wpi.first.units.Units.Seconds;
-
-import static frc.robot.Constants.LEDConstants.*;
-import static frc.robot.Constants.FuelConstants.*;
-import static frc.robot.Constants.OperatorConstants.*;
+import static frc.robot.Constants.OperatingConstants.*;
 
 
 /**
@@ -43,52 +25,19 @@ import static frc.robot.Constants.OperatorConstants.*;
 public class Robot extends TimedRobot {
 	
 	private final DriveTrain driveTrain;
+	private final LEDController ledController;
 	
-	// TODO: 2027 doesn't support SendableChooser so find alternatives
-	private static final String kDefaultAuto = "Default: Backup from Hub and then Launch";
-	private static final String kLaunchFromEitherSide = "Launch from either Side";
-	private static final String kLaunchRight = "Launch from Right side and go to Feeder";
-	private static final String kLaunchLeft = "Launch from Left side and go to Floor bin";
-	private String m_autoSelected;
-	private final SendableChooser<String> m_chooser = new SendableChooser<>();
+	// TODO: 2027 doesn't support SendableChooser so find alternatives when upgrading
+	// TODO: also clean chooser code code to be more readable
+	private static final String TEST_A = "A";
+	private static final String TEST_B = "B";
+
+	private String testSelected;
+	private final SendableChooser<String> chooser = new SendableChooser<>();
 	
-	private static final String kControllerTank = "Default: Controller set to tank controls";
-	private static final String kControllerArcade = "Controller set to Arcade controls";
-	private String m_controllerSelected;
-	private final SendableChooser<String> m_controllerChooser = new SendableChooser<>();
-	
-	private final SparkMax leftIntakeShootExpel = new SparkMax(LEFT_LAUNCH_MOTOR_ID, MotorType.kBrushed);
-	private final SparkMax rightBinIntakeExpel = new SparkMax(RIGHT_LAUNCH_MOTOR_ID, MotorType.kBrushed);
-	
-	
-	private final Timer autoTimer = new Timer();
-	private final Timer spinUpTimer = new Timer();
-	
+	// actual controllers use by driver and operator, can't be accessed during disabled
 	private final XboxController driverController = new XboxController(DRIVER_CONTROLLER_PORT);
 	private final XboxController opController = new XboxController(OPERATOR_CONTROLLER_PORT);
-	
-	// the LED strip that we use has a grb setup, so flip green and red values
-	// TODO: move all led code to new class
-	private final LEDPattern red = LEDPattern.solid(Color.kGreen)
-	.atBrightness(Dimensionless.ofRelativeUnits(LED_BRIGHTNESS_PERCENT, Percent)); // Used for launch default
-	private final LEDPattern green = LEDPattern.solid(Color.kRed)
-	.atBrightness(Dimensionless.ofRelativeUnits(LED_BRIGHTNESS_PERCENT, Percent)); // Used for launch left
-	private final LEDPattern blue = LEDPattern.solid(Color.kBlue)
-	.atBrightness(Dimensionless.ofRelativeUnits(LED_BRIGHTNESS_PERCENT, Percent)); // Used for launch right
-	private final LEDPattern purple = LEDPattern.solid(Color.kCyan)
-	.atBrightness(Dimensionless.ofRelativeUnits(LED_BRIGHTNESS_PERCENT, Percent)); // Used for launch either side
-	private final LEDPattern scrollTeleOp = LEDPattern.gradient(GradientType.kDiscontinuous, Color.kNavy, Color.kGold)
-	.scrollAtRelativeSpeed(Percent.per(Second).of(LED_SCROLL_SPEED))
-	.atBrightness(Dimensionless.ofRelativeUnits(LED_BRIGHTNESS_PERCENT, Percent)); // Used for teleop, just to look cool
-	
-	private final LEDPattern redBlink = red.blink(Seconds.of(LED_BLINKING_RATE));
-	private final LEDPattern greenBlink = green.blink(Seconds.of(LED_BLINKING_RATE));
-	private final LEDPattern blueBlink = blue.blink(Seconds.of(LED_BLINKING_RATE));
-	private final LEDPattern purpleBlink = purple.blink(Seconds.of(LED_BLINKING_RATE));
-	
-	private AddressableLEDBuffer m_ledBuffer;
-	private AddressableLED m_led;
-	
 	
 	/*
 	* This function is ran when the robot is first started up and should be used
@@ -101,36 +50,13 @@ public class Robot extends TimedRobot {
 		// instantiate the driveTrain
 		// TODO: have control scheme actually match chooser, right now the value just gets set
 		driveTrain = new DriveTrain(false);
+
+		ledController = new LEDController(92);
 		
-		m_chooser.setDefaultOption("Default: Backup from Hub and then Launch", kDefaultAuto);
-		m_chooser.addOption("Launch from either Side", kLaunchFromEitherSide);
-		m_chooser.addOption("Launch from Right side and go to Feeder", kLaunchRight);
-		m_chooser.addOption("Launch from Left side and go to Floor bin", kLaunchLeft);
-		SmartDashboard.putData("Auto choices", m_chooser);
-		
-		m_controllerChooser.setDefaultOption("Default: Controller set to tank controls", kControllerTank);
-		m_controllerChooser.addOption("Controller set to Arcade controls", kControllerArcade);
-		SmartDashboard.putData("Controller choices", m_controllerChooser);
-		
-		
-		
-		m_led = new AddressableLED(LED_PWM_PORT);
-		// Length is expensive to set, so only set it once, then just update data
-		m_ledBuffer = new AddressableLEDBuffer(92);
-		m_led.setLength(m_ledBuffer.getLength());
-		// Set the data, will not work without it being updated
-		m_led.setData(m_ledBuffer);
-		m_led.start();
-		
-		// --------------------Shooter Configs-------------------------------------
-		SparkMaxConfig leftConfig = new SparkMaxConfig();
-		leftConfig.smartCurrentLimit(LEFT_LAUNCH_CURRENT_LIMIT);
-		leftConfig.inverted(false);
-		leftIntakeShootExpel.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		SparkMaxConfig rightConfig = new SparkMaxConfig();
-		rightConfig.smartCurrentLimit(RIGHT_LAUNCH_CURRENT_LIMIT);
-		rightConfig.inverted(false);
-		rightBinIntakeExpel.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		chooser.setDefaultOption("Default: value A", TEST_A);
+		chooser.addOption("Test: value B", TEST_B);
+
+		SmartDashboard.putData("Test choices", chooser);
 	}
 	
 	/**
@@ -165,159 +91,29 @@ public class Robot extends TimedRobot {
 	@Override
 	public void autonomousInit() {
 		updateSelected();
-		
-		autoTimer.start();
-		autoTimer.reset();
 	}
 	
 	/** This function is called periodically during autonomous. */
 	@Override
 	public void autonomousPeriodic() {
-		updateLEDS();
-		switch (m_autoSelected) {
-			case kLaunchRight: // Routine: Launch from Right side then turn and go to Human Feeder
-			if (autoTimer.get() < SPINUP_SECONDS) {// Spinup the Launcher
-				leftIntakeShootExpel.setVoltage(LAUNCHING_LEFT_VOLTAGE);
-				rightBinIntakeExpel.setVoltage(SPINUP_RIGHT_VOLTAGE);
-			} else if (autoTimer.get() < SHOOT_SECONDS) {// Shoot
-				leftIntakeShootExpel.setVoltage(LAUNCHING_LEFT_VOLTAGE);
-				rightBinIntakeExpel.setVoltage(LAUNCHING_RIGHT_VOLTAGE);
-			} else if (autoTimer.get() < SHOOT_SECONDS + 1) {// Move away from Hub
-				leftIntakeShootExpel.setVoltage(0);
-				rightBinIntakeExpel.setVoltage(0);
-				driveTrain.tankDrive(-.7, -.7);
-			} else if (autoTimer.get() < SHOOT_SECONDS + 1.5) {// Turn to Feeder
-				leftIntakeShootExpel.setVoltage(0);
-				rightBinIntakeExpel.setVoltage(0);
-				driveTrain.tankDrive(.4, -.4);
-			} else if (autoTimer.get() < SHOOT_SECONDS + 3) {// Move to Feeder
-				leftIntakeShootExpel.setVoltage(0);
-				rightBinIntakeExpel.setVoltage(0);
-				driveTrain.tankDrive(-.7, -.7);
-			} else {
-				leftIntakeShootExpel.setVoltage(0);
-				rightBinIntakeExpel.setVoltage(0);
-			}
-			break;
-			
-			case kLaunchLeft: // Routine: Launch from Right side then turn and go to Human Feeder
-			if (autoTimer.get() < SPINUP_SECONDS) {// Spinup the Launcher
-				leftIntakeShootExpel.setVoltage(LAUNCHING_LEFT_VOLTAGE);
-				rightBinIntakeExpel.setVoltage(SPINUP_RIGHT_VOLTAGE);
-			} else if (autoTimer.get() < SHOOT_SECONDS) {// Shoot
-				leftIntakeShootExpel.setVoltage(LAUNCHING_LEFT_VOLTAGE);
-				rightBinIntakeExpel.setVoltage(LAUNCHING_RIGHT_VOLTAGE);
-			} else if (autoTimer.get() < SHOOT_SECONDS + 1) {// Move away from Hub
-				leftIntakeShootExpel.setVoltage(0);
-				rightBinIntakeExpel.setVoltage(0);
-				driveTrain.tankDrive(-.7, -.7);
-			} else if (autoTimer.get() < SHOOT_SECONDS + 1.5) {// Turn to Feeder
-				leftIntakeShootExpel.setVoltage(0);
-				rightBinIntakeExpel.setVoltage(0);
-				driveTrain.tankDrive(-.4, .4);
-			} else if (autoTimer.get() < SHOOT_SECONDS + 3) {// Move to Feeder
-				leftIntakeShootExpel.setVoltage(0);
-				rightBinIntakeExpel.setVoltage(0);
-				driveTrain.tankDrive(-.7, -.7);
-			} else {
-				leftIntakeShootExpel.setVoltage(0);
-				rightBinIntakeExpel.setVoltage(0);
-			}
-			break;
-			
-			case kLaunchFromEitherSide: // Routine: Set robot 30 inches to side of Hub, angled to point at Hub with outside corner at start line
-			if (autoTimer.get() < SPINUP_SECONDS) {// spinup the Launcher
-				leftIntakeShootExpel.setVoltage(LAUNCHING_LEFT_VOLTAGE);
-				rightBinIntakeExpel.setVoltage(SPINUP_RIGHT_VOLTAGE);
-			} else if (autoTimer.get() < SHOOT_SECONDS) {
-				if (autoTimer.get() > 6 && autoTimer.get() < 6.4) {
-					leftIntakeShootExpel.setVoltage(-LAUNCHING_LEFT_VOLTAGE);
-					rightBinIntakeExpel.setVoltage(-LAUNCHING_RIGHT_VOLTAGE);
-				} else {
-					leftIntakeShootExpel.setVoltage(LAUNCHING_LEFT_VOLTAGE);
-					rightBinIntakeExpel.setVoltage(LAUNCHING_RIGHT_VOLTAGE);
-				}
-			} else {
-				leftIntakeShootExpel.setVoltage(0);
-				rightBinIntakeExpel.setVoltage(0);
-			}
-			break;
-			
-			case kDefaultAuto: // This has several item tests commented out followed by Default routine starting centered on Hub
-			default:
-			
-			// leftForwardDriveLead.set(.35);
-			// leftBackDriveFollower.set(.35);
-			// rightForwardDriveLead.set(.35);
-			// rightBackDriveFollower.set(.35);
-			// rightShooterFeeder.set(.7);
-			// leftShooterIntakeShooter.set(.97);
-			
-			if (autoTimer.get() < SPINUP_SECONDS - 0.5) {// spinup the Launcher
-				leftIntakeShootExpel.setVoltage(LAUNCHING_LEFT_VOLTAGE);
-				rightBinIntakeExpel.setVoltage(SPINUP_RIGHT_VOLTAGE);
-				driveTrain.tankDrive(-.5, -.5);
-			} else if (autoTimer.get() < SHOOT_SECONDS) {
-				if (autoTimer.get() > 6 && autoTimer.get() < 6.4) {
-					leftIntakeShootExpel.setVoltage(-LAUNCHING_LEFT_VOLTAGE);
-					rightBinIntakeExpel.setVoltage(-LAUNCHING_RIGHT_VOLTAGE);
-				} else {
-					leftIntakeShootExpel.setVoltage(LAUNCHING_LEFT_VOLTAGE);
-					rightBinIntakeExpel.setVoltage(LAUNCHING_RIGHT_VOLTAGE);
-				}
-				driveTrain.stopTankDrive();// stop
-			} else {
-				leftIntakeShootExpel.setVoltage(0);
-				rightBinIntakeExpel.setVoltage(0);
-				driveTrain.stopTankDrive();
-			}
-			break;
-		}
+		ledController.updateLEDS();
 	}
 	
 	/* This function is called once when teleop is enabled. */
 	@Override
 	public void teleopInit() {
 		updateSelected();
-		
-		autoTimer.stop();
-		spinUpTimer.start();
 	}
 	
 	/* This function is called periodically during operator control. */
 	@Override
 	public void teleopPeriodic() {
-		scrollTeleOp.applyTo(m_ledBuffer);
-		m_led.setData(m_ledBuffer);
-		
+
 		// slow mode lets the driver control the bot easier by slowing down the max speed of the bot
 		boolean slowMode = driverController.getLeftBumperButton();
 		
 		// drive with controller
 		driveTrain.controllerDrive(driverController.getLeftY(), driverController.getRightY(), slowMode);
-		
-		// ---------------------------------Fuel Mechanism...Fuel Operator----------------------------------------
-		if (opController.getRightBumperButton()) { // press Right Bumper to launch fuel
-			if (opController.getRightBumperButtonPressed()) {
-				spinUpTimer.reset();
-			}
-			if (spinUpTimer.get() < SPINUP_SECONDS) { // spinning up the Launcher
-				leftIntakeShootExpel.setVoltage(LAUNCHING_LEFT_VOLTAGE);
-				rightBinIntakeExpel.setVoltage(SPINUP_RIGHT_VOLTAGE);
-			} else {
-				leftIntakeShootExpel.setVoltage(LAUNCHING_LEFT_VOLTAGE);
-				rightBinIntakeExpel.setVoltage(LAUNCHING_RIGHT_VOLTAGE);
-			}
-		} else if (opController.getAButton()) { // press A to Intake fuel from Floor
-			leftIntakeShootExpel.setVoltage(INTAKING_LEFT_VOLTAGE);
-			rightBinIntakeExpel.setVoltage(INTAKING_RIGHT_VOLTAGE);
-		} else if (opController.getYButton()) { // press Y to Expel fuel
-			leftIntakeShootExpel.setVoltage(-INTAKING_LEFT_VOLTAGE);
-			rightBinIntakeExpel.setVoltage(-INTAKING_RIGHT_VOLTAGE);
-		} else { // turn stuff off if nothing is pressed
-			leftIntakeShootExpel.setVoltage(0);
-			rightBinIntakeExpel.setVoltage(0);
-		}
 	}
 	
 	/** This function is called once when the robot is disabled. */
@@ -329,7 +125,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void disabledPeriodic() {
 		updateSelected();
-		updateLEDS();
+		ledController.updateLEDS();
 	}
 	
 	/** This function is called once when test mode is enabled. */
@@ -353,44 +149,7 @@ public class Robot extends TimedRobot {
 	}
 	
 	public void updateSelected() { // Only run when starting a mode, not during.
-		m_autoSelected = m_chooser.getSelected();
-		m_controllerSelected = m_controllerChooser.getSelected();
-		// System.out.println("Auto mode selected: " + m_autoSelected);
-		// System.out.println("Controller mode selected: " + m_controllerSelected);
+		testSelected = chooser.getSelected();
+		System.out.print(testSelected);
 	}
-	
-	private void updateLEDS() {
-		if (m_controllerSelected == kControllerArcade) { // If controller is arcade, start blinking
-			switch (m_autoSelected) {
-				case kLaunchRight:
-				greenBlink.applyTo(m_ledBuffer);
-				break;
-				case kLaunchLeft:
-				blueBlink.applyTo(m_ledBuffer);
-				break;
-				case kLaunchFromEitherSide:
-				purpleBlink.applyTo(m_ledBuffer);
-				break;
-				default:
-				redBlink.applyTo(m_ledBuffer);
-				break;
-			}
-		} else { // If controller is tank, don't blink
-		switch (m_autoSelected) {
-			case kLaunchRight:
-			green.applyTo(m_ledBuffer);
-			break;
-			case kLaunchLeft:
-			blue.applyTo(m_ledBuffer);
-			break;
-			case kLaunchFromEitherSide:
-			purple.applyTo(m_ledBuffer);
-			break;
-			default:
-			red.applyTo(m_ledBuffer);
-			break;
-		}
-	}
-	m_led.setData(m_ledBuffer);
-}
 }
