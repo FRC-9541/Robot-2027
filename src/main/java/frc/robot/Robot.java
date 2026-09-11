@@ -33,7 +33,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void autonomousInit() {
-		robot.updateSelected();
 		autoCommand = robot.getAutonomousCommand();
 
     	if (autoCommand != null) {
@@ -43,8 +42,6 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
-		robot.updateSelected();
-
 		// This makes sure that the autonomous stops running when
     	// teleop starts running. If you want the autonomous to
     	// continue until interrupted by another command, remove
@@ -53,8 +50,4 @@ public class Robot extends TimedRobot {
       		autoCommand.cancel();
     	}
 	} 
-
-	public void disabledInit() {
-		robot.updateSelected();
-	}
 }

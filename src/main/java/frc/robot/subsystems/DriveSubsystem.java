@@ -20,6 +20,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.Constants.DriveConstants.*;
 
+import java.util.function.BooleanSupplier;
+
 // all drive related objects and code should be contained in this class
 public class DriveSubsystem extends SubsystemBase {
 
@@ -107,19 +109,19 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// refresh monitoring metrics on the user dashboard
 		field.setRobotPose(pose);
+		// TODO: change dashboard
 		SmartDashboard.putNumber("Odometry X (meters)", pose.getX());
 		SmartDashboard.putNumber("Odometry Y (meters)", pose.getY());
 		SmartDashboard.putNumber("Heading (degrees)", pose.getRotation().getDegrees());
 	}
 
 	private double calculateFilter(SlewRateLimiter filter, double value) {
-
 		// if damping, return calculated, else return value
 		return USE_DRIVE_DAMPING ? filter.calculate(value) : value;
 	}
 
-	public Command driveWithControllerCommand(double leftY, double rightY, double rightX, boolean arcadeDrive) {
-		if (arcadeDrive) {
+	public Command driveWithControllerCommand(double leftY, double rightY, double rightX, BooleanSupplier arcadeDrive) {
+		if (arcadeDrive.getAsBoolean()) {
 			return arcadeDriveCommand(calculateFilter(arcadeFilter, leftY), rightX);
 		} else {
 			return tankDriveCommand(calculateFilter(tankLeftFilter, leftY), calculateFilter(tankRightFilter, rightY));

@@ -43,6 +43,7 @@ public final class Constants {
 		// Second blinking rate for drive mode while not in teleop
 		public static final double LED_BLINKING_RATE = 1;
 		
+		public static final int LED_LENGTH = 92; 
 		public static final int LED_BRIGHTNESS_PERCENT = 70; // Can go up to 200%, might trip fuse through
 		public static final int LED_SCROLL_SPEED = 50; // In percent per second, so scrolls completely once every 2 seconds
 		// Every led strip must be plugged into this port
