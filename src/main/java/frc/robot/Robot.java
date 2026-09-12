@@ -6,6 +6,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.util.Elastic;
 
 /**
 * The methods in this class are called automatically corresponding to each
@@ -32,20 +34,26 @@ public class Robot extends TimedRobot {
 	}
 
 	@Override
+	public void robotPeriodic() {
+		// for the commands to work
+    	CommandScheduler.getInstance().run();
+	}
+
+	@Override
 	public void autonomousInit() {
+		Elastic.selectTab(1);
 		autoCommand = robot.getAutonomousCommand();
 
+		// starts auto command if it exists
     	if (autoCommand != null) {
-      		autoCommand.schedule();
+      		CommandScheduler.getInstance().schedule(autoCommand);
     	}
   	}
 
 	@Override
 	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-    	// teleop starts running. If you want the autonomous to
-    	// continue until interrupted by another command, remove
-    	// this line or comment it out.
+		Elastic.selectTab(0);
+		// stops the auto command at the start of teleop so we can control
     	if (autoCommand != null) {
       		autoCommand.cancel();
     	}

@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.DriveConstants.*;
 
 import java.util.function.BooleanSupplier;
@@ -60,12 +61,19 @@ public class DriveSubsystem extends SubsystemBase {
 
 		this.drivetrain.setMaxOutput(DRIVE_SCALE);
 		
-
 		// register driveConfig, values here can be finicky so blame this before others
 		SparkMaxConfig driveConfig = new SparkMaxConfig();
 		driveConfig.voltageCompensation(12); // 12 volt motors
 		driveConfig.smartCurrentLimit(DRIVE_MOTOR_CURRENT_LIMIT);
 
+		// guesses
+		// TODO: move to constants
+		double wheelDiameterMeters = 0.1524;
+		double gearRatio = 8.45;
+		double positionConversionFactor = (Math.PI * wheelDiameterMeters) / gearRatio;
+		driveConfig.encoder.positionConversionFactor(positionConversionFactor);
+
+		// TODO: split drive config into left and right for readability
 		driveConfig.follow(leftForwardDriveLead);
 		leftBackDriveFollower.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		driveConfig.follow(rightForwardDriveLead);
@@ -76,12 +84,6 @@ public class DriveSubsystem extends SubsystemBase {
 		leftForwardDriveLead.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		driveConfig.inverted(true);
 		rightForwardDriveLead.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-		double wheelDiameterMeters = 0.1524;
-		double gearRatio = 8.45;
-		double positionConversionFactor = (Math.PI * wheelDiameterMeters) / gearRatio;
-
-		driveConfig.encoder.positionConversionFactor(positionConversionFactor);
 
 		// Set the distance per pulse for the drive encoders. We can simply use the
 		// distance traveled for one rotation of the wheel divided by the encoder
@@ -99,7 +101,7 @@ public class DriveSubsystem extends SubsystemBase {
 				rightEncoder.getPosition(),
 				new Pose2d(0.0, 0.0, new Rotation2d()) // sets starting tracking position to X:0, Y:0
 		);
-
+		// TODO: change dashboard in 2027
 		SmartDashboard.putData("Field", field);
 	}
 
@@ -128,14 +130,22 @@ public class DriveSubsystem extends SubsystemBase {
 		}
 	}
 
+	public Command driveDistanceCommand(double speed, double distanceMeters) {
+		double left = leftEncoder.getPosition();
+		double right = rightEncoder.getPosition();
+		return arcadeDriveCommand(speed, 0).until(() -> {
+			return Math.max(leftEncoder.getPosition() - left, rightEncoder.getPosition() - right) >= distanceMeters;
+		}).withTimeout(Seconds.of(1)); // may need to get changed, on the safer side
+	}
+
 	public Command arcadeDriveCommand(double speed, double rotation) {
-		return runOnce(() -> drivetrain.arcadeDrive(speed, rotation)).withName("arcadeDrive");
+		return run(() -> drivetrain.arcadeDrive(speed, rotation)).withName("arcadeDrive");
 	}
 
 	// tank drive is where one value controls one side of the movement, and the
 	// other controls the other
 	public Command tankDriveCommand(double left, double right) {
-		return runOnce(() -> drivetrain.tankDrive(left, right)).withName("tankDrive");
+		return run(() -> drivetrain.tankDrive(left, right)).withName("tankDrive");
 	}
 
 	// stops the drivetrain from driving

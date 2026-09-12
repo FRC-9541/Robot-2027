@@ -17,7 +17,7 @@ public class LEDSubsystem extends SubsystemBase {
 
     public LEDSubsystem() {
         super();
-        this.catcherLED = new LEDStrip(LED_LENGTH, LED_PWM_PORT, LEDPatterns.RED, ColorOrder.kGRB);
+        this.catcherLED = new LEDStrip(LED_LENGTH, LEDPatterns.RED, ColorOrder.kGRB);
     }
 
     public Command setCatcherPatternCommand(LEDPattern pattern) {
@@ -34,9 +34,5 @@ public class LEDSubsystem extends SubsystemBase {
         } else if (RobotState.isAutonomous()) { 
 
         }
-
-    }
-        
-   
-        
+    }   
 }

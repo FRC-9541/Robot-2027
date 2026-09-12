@@ -1,11 +1,13 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
+import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.lighting.LEDPatterns;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
@@ -23,6 +25,7 @@ public class RobotContainer {
 
     // TODO: 2027 doesn't support SendableChooser so change to Selectable
 	private final SendableChooser<Command> testChooser = new SendableChooser<>();
+    private final SendableChooser<Command> autoChooser = new SendableChooser<>();
     private final SendableChooser<Boolean> driveChooser = new SendableChooser<>();
 
 	
@@ -38,9 +41,13 @@ public class RobotContainer {
 		testChooser.addOption("Green", led.setCatcherPatternCommand(LEDPatterns.GREEN));
         SmartDashboard.putData("Test choices", testChooser);
 
+        autoChooser.setDefaultOption("Do Nothing", Commands.none());
+        autoChooser.addOption("Drive 1 Meter Forward", drive.driveDistanceCommand(0.2, 1));
+        SmartDashboard.putData("Auto Choices", autoChooser);
+
         driveChooser.setDefaultOption("Default: Arcade Drive", true);
 		driveChooser.addOption("Tank Drive", false);
-        SmartDashboard.putData("Drive choices", drive);
+        SmartDashboard.putData("Drive choices", driveChooser);
 		
     }
 
@@ -55,7 +62,6 @@ public class RobotContainer {
     }
 
     public Command getAutonomousCommand() {
-        // TODO: replace with actual Auto Commands (from chooser)
-        return new Command() {};
+        return autoChooser.getSelected();
     }
 }
