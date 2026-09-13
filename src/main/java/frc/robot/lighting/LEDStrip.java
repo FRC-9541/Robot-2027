@@ -1,10 +1,7 @@
 
 package frc.robot.lighting;
 
-import static frc.robot.Constants.LEDConstants.LED_PWM_PORT;
-
-import java.lang.reflect.Array;
-import java.util.List;
+import static frc.robot.Constants.LEDConstants.*;
 
 import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
@@ -45,17 +42,10 @@ public class LEDStrip {
         // apply and set data
         pattern.applyTo(ledBuffer);
 	    led.setData(ledBuffer);
-
-		SmartDashboard.putStringArray("LED Color", this.getColor());
+		SmartDashboard.putString("LED Color", this.getColor());
     }   
 
-	public String[] getColor() {
-		String[] colors = {
-			ledBuffer.getLED(1).toHexString(),
-			ledBuffer.getLED(ledBuffer.getLength()/2).toHexString(),
-			ledBuffer.getLED(ledBuffer.getLength()/2).toHexString(),
-			ledBuffer.getLED(ledBuffer.getLength() - 1).toHexString(),
-		};
-		return colors;
+	public String getColor() {
+		return ledBuffer.getLED(0).toHexString();
 	}
 }

@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.Elastic;
+import frc.robot.util.Elastic.Notification;
+import frc.robot.util.Elastic.NotificationLevel;
 
 /**
 * The methods in this class are called automatically corresponding to each
@@ -43,6 +45,8 @@ public class Robot extends TimedRobot {
 	public void autonomousInit() {
 		Elastic.selectTab(1);
 		autoCommand = robot.getAutonomousCommand();
+		Elastic.sendNotification(new Notification(NotificationLevel.INFO, "Starting Auto", "Running Auto Command: " + (autoCommand == null ? "Null" : autoCommand.getName()), 5000));
+
 
 		// starts auto command if it exists
     	if (autoCommand != null) {

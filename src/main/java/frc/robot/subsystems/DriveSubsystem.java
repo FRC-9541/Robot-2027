@@ -7,10 +7,16 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.config.SparkMaxConfig;
 
+import choreo.trajectory.DifferentialSample;
+import edu.wpi.first.math.controller.LTVUnicycleController;
 import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
+import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -55,6 +61,7 @@ public class DriveSubsystem extends SubsystemBase {
 	private SlewRateLimiter tankRightFilter = new SlewRateLimiter(TANK_DRIVE_CONTROLLER_DAMPING);
 	private SlewRateLimiter arcadeFilter = new SlewRateLimiter(ARCADE_DRIVE_CONTROLLER_DAMPING);
 
+	private final LTVUnicycleController controller = new LTVUnicycleController(0.02);
 
 	public DriveSubsystem() {
 		super();
@@ -122,6 +129,32 @@ public class DriveSubsystem extends SubsystemBase {
 		return USE_DRIVE_DAMPING ? filter.calculate(value) : value;
 	}
 
+	public void followTrajectory(DifferentialSample sample) {
+        // Get the velocity feedforward specified by the sample
+        ChassisSpeeds ff = sample.getChassisSpeeds();
+
+		DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(27.0));
+
+        // Generate the next speeds for the robot
+        ChassisSpeeds speeds = controller.calculate(
+            pose,
+            sample.getPose(),
+            ff.vxMetersPerSecond,
+            ff.omegaRadiansPerSecond
+        );
+
+        DifferentialDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds); // 
+        drivetrain.tankDrive(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
+    }
+
+	public Pose2d getPose() {
+		return pose;
+	}
+
+	public void resetOdometry(Pose2d newPose) {
+		odometry.resetPose(newPose);
+	}
+
 	public Command driveWithControllerCommand(double leftY, double rightY, double rightX, BooleanSupplier arcadeDrive) {
 		if (arcadeDrive.getAsBoolean()) {
 			return arcadeDriveCommand(calculateFilter(arcadeFilter, leftY), rightX);
@@ -133,9 +166,16 @@ public class DriveSubsystem extends SubsystemBase {
 	public Command driveDistanceCommand(double speed, double distanceMeters) {
 		double left = leftEncoder.getPosition();
 		double right = rightEncoder.getPosition();
-		return arcadeDriveCommand(speed, 0).until(() -> {
-			return Math.max(leftEncoder.getPosition() - left, rightEncoder.getPosition() - right) >= distanceMeters;
-		}).withTimeout(Seconds.of(1)); // may need to get changed, on the safer side
+
+		return arcadeDriveCommand(speed, 0)
+			.until(() -> {
+				return Math.max(leftEncoder.getPosition() - left, rightEncoder.getPosition() - right) >= distanceMeters;
+			})
+		
+			.finallyDo(interrupted -> drivetrain.stopMotor()) // stop motor when it ends
+		
+			.withTimeout(Seconds.of(1)) // may need to get changed, on the safer side
+			.withName("driveDistance");
 	}
 
 	public Command arcadeDriveCommand(double speed, double rotation) {
