@@ -28,6 +28,7 @@ import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.DriveConstants.*;
 
 import java.util.function.BooleanSupplier;
+import java.util.function.DoubleSupplier;
 
 // all drive related objects and code should be contained in this class
 public class DriveSubsystem extends SubsystemBase {
@@ -142,7 +143,6 @@ public class DriveSubsystem extends SubsystemBase {
             ff.vxMetersPerSecond,
             ff.omegaRadiansPerSecond
         );
-
         DifferentialDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds); // 
         drivetrain.tankDrive(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
     }
@@ -155,12 +155,14 @@ public class DriveSubsystem extends SubsystemBase {
 		odometry.resetPose(newPose);
 	}
 
-	public Command driveWithControllerCommand(double leftY, double rightY, double rightX, BooleanSupplier arcadeDrive) {
-		if (arcadeDrive.getAsBoolean()) {
-			return arcadeDriveCommand(calculateFilter(arcadeFilter, leftY), rightX);
-		} else {
-			return tankDriveCommand(calculateFilter(tankLeftFilter, leftY), calculateFilter(tankRightFilter, rightY));
-		}
+	public Command driveWithControllerCommand(DoubleSupplier leftY, DoubleSupplier rightY, DoubleSupplier rightX, BooleanSupplier arcadeDrive) {
+    	return run(() -> {
+        	if (arcadeDrive.getAsBoolean()) {
+            	drivetrain.arcadeDrive(calculateFilter(arcadeFilter, leftY.getAsDouble()), rightX.getAsDouble());
+        	} else {
+            	drivetrain.tankDrive(calculateFilter(tankLeftFilter, leftY.getAsDouble()), calculateFilter(tankRightFilter, rightY.getAsDouble()));
+        	}
+    	}).withName("driveWithController");
 	}
 
 	public Command driveDistanceCommand(double speed, double distanceMeters) {

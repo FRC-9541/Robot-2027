@@ -7,15 +7,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.lighting.LEDPatterns;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.util.Elastic;
 
 import static frc.robot.Constants.OperatingConstants.*;
-
-import java.util.Set;
 
 import choreo.auto.AutoFactory;
 
@@ -40,11 +37,6 @@ public class RobotContainer {
     public RobotContainer() {
         CameraServer.startAutomaticCapture();
 
-        // set commands to chooser
-        testChooser.setDefaultOption("Default: Red", led.setCatcherPatternCommand(LEDPatterns.RED));
-		testChooser.addOption("Green", led.setCatcherPatternCommand(LEDPatterns.GREEN));
-        SmartDashboard.putData("Test Choices", testChooser);
-
         autoFactory = new AutoFactory(
             drive::getPose, // A function that returns the current robot pose
             drive::resetOdometry, // A function that resets the current robot pose to the provided Pose2d
@@ -68,19 +60,14 @@ public class RobotContainer {
         return autoFactory.trajectoryCmd("moveForwardAndTurn").withName("moveForwardAndTurn");
     }
 
-
     public void configureBindings() {
         drive.setDefaultCommand(
-            drive.driveWithControllerCommand(driver.getLeftY(), driver.getRightY(), driver.getRightX(), driveChooser::getSelected)
+            drive.driveWithControllerCommand(driver::getLeftY, driver::getRightY, driver::getRightX, driveChooser::getSelected)
         ); 
 
         shooter.setDefaultCommand(
             shooter.launchCommand(operator.getRightBumperButton(), operator.getRightBumperButtonPressed(), operator.getAButton(), operator.getYButton())
         );
-
-        // example code for led subsystem, get set to either red or green if a is pressed, or blue if b is pressed
-        driver.a().onTrue(Commands.defer(testChooser::getSelected, Set.of(led)));
-        driver.b().onTrue(led.setCatcherPatternCommand(LEDPatterns.BLUE));
 
         Elastic.sendNotification(new Elastic.Notification(Elastic.NotificationLevel.INFO, "robot start finished", "yippie"));
     }
