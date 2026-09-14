@@ -32,6 +32,27 @@ public final class Constants {
 		public static final double DRIVE_SCALE = .78;
 		public static final double ROTATION_SCALE = .7;
 	}
+
+	public static final class ShooterConstants {
+    // Motor controller IDs for fuel mechanism motors
+    public static final int LEFT_LAUNCH_MOTOR_ID = 2;
+    public static final int RIGHT_LAUNCH_MOTOR_ID = 3;
+
+    // Current limit and nominal voltage for fuel mechanism motors
+    public static final int LEFT_LAUNCH_CURRENT_LIMIT = 60;
+    public static final int RIGHT_LAUNCH_CURRENT_LIMIT = 60;
+
+    // Voltages for fuel stages
+    public static final double SPINUP_LEFT_VOLTAGE = 1;
+    public static final double SPINUP_RIGHT_VOLTAGE = -6;
+    public static final double INTAKING_LEFT_VOLTAGE = -9;
+    public static final double INTAKING_RIGHT_VOLTAGE = -12;
+    public static final double LAUNCHING_LEFT_VOLTAGE = -10.6;
+    public static final double LAUNCHING_RIGHT_VOLTAGE = 9;
+
+    public static final double SPINUP_SECONDS = 1;
+    public static final double SHOOT_SECONDS = 11; // Includes the SPINUP time for an actual (SHOOT minus SPINUP) seconds
+  }
 	
 	public static final class OperatingConstants {
 		// Ports in driver station that each controller should go to

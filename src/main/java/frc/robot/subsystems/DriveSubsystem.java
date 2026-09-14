@@ -179,7 +179,8 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public Command arcadeDriveCommand(double speed, double rotation) {
-		return run(() -> drivetrain.arcadeDrive(speed, rotation)).withName("arcadeDrive");
+		return run(() -> drivetrain.arcadeDrive(speed, rotation))		
+		.withName("arcadeDrive");
 	}
 
 	// tank drive is where one value controls one side of the movement, and the
