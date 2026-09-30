@@ -33,6 +33,7 @@ public class Robot extends TimedRobot {
 	*/
 	public Robot() {
 		robot.configureBindings();
+		Elastic.sendNotification(new Elastic.Notification(Elastic.NotificationLevel.INFO, "robot start finished", "yippie"));
 	}
 
 	@Override
