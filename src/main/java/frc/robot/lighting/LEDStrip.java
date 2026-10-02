@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj.AddressableLED;
 import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj.LEDPattern;
 import edu.wpi.first.wpilibj.AddressableLED.ColorOrder;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * note: there must only be one instance of this class or there will be a error on RoboRIO, 
@@ -19,8 +18,11 @@ public class LEDStrip {
 	// buffer and led objects
 	private AddressableLEDBuffer ledBuffer;
 	private AddressableLED led;
+	private LEDPattern pattern;
 	
     public LEDStrip(int bufferLength, LEDPattern startPattern, ColorOrder order) {
+
+		pattern = startPattern;
 
 		led = new AddressableLED(LED_PWM_PORT);
 
@@ -32,20 +34,22 @@ public class LEDStrip {
 		led.setColorOrder(order);
 
 		// Set the data, will not work without it being updated
-		led.setData(ledBuffer);
+		update();
 		led.start();
 
-		setPattern(startPattern);
     }
+
+	public void update() {
+		pattern.applyTo(ledBuffer);
+		led.setData(ledBuffer);
+	}
 
     public void setPattern(LEDPattern pattern) {
         // apply and set data
-        pattern.applyTo(ledBuffer);
-	    led.setData(ledBuffer);
-		SmartDashboard.putString("LED Color", this.getColor());
-    }   
+        this.pattern = pattern;
+	}   
 
-	public String getColor() {
+	public String getDefaultColor() {
 		return ledBuffer.getLED(0).toHexString();
 	}
 }

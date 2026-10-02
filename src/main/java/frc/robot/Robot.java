@@ -56,6 +56,9 @@ public class Robot extends TimedRobot {
   	}
 
 	@Override
+	public void autonomousPeriodic() {}
+
+	@Override
 	public void teleopInit() {
 		Elastic.selectTab(0);
 		// stops the auto command at the start of teleop so we can control
@@ -63,4 +66,19 @@ public class Robot extends TimedRobot {
       		autoCommand.cancel();
     	}
 	} 
+
+	@Override
+	public void teleopPeriodic() {}
+
+	@Override
+	public void disabledInit() {}
+
+	@Override
+	public void disabledPeriodic() {}
+
+	@Override
+	public void simulationInit() {}
+
+	@Override
+	public void simulationPeriodic() {}
 }

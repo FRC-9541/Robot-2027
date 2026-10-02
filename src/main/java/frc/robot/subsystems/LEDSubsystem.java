@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import static frc.robot.Constants.LEDConstants.*;
 
 import edu.wpi.first.wpilibj.LEDPattern;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.AddressableLED.ColorOrder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -21,6 +22,14 @@ public class LEDSubsystem extends SubsystemBase {
 
     public Command setCatcherPatternCommand(LEDPattern pattern) {
         return setPatternCommand(pattern, catcherLED);
+    }
+
+    public Command updateLEDsCommand() {
+        return run(() -> {
+            SmartDashboard.putString("LED Color", catcherLED.getDefaultColor());
+            catcherLED.update();
+        });
+    
     }
 
     private Command setPatternCommand(LEDPattern pattern, LEDStrip ledStrip) {
