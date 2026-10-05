@@ -33,6 +33,9 @@ public class AutoHandler {
         register("Move 1 Meter Forward",
             drive.driveDistanceCommand(0.2, 1).withName("move1MeterForward"));
 
+        register("TEST DON'T USE",
+            simpleTrajCommand("NewPath"));
+
         register("test Choreo Command, moveForwardAndTurn", 
            simpleTrajCommand("moveForwardAndTurn"));
 
@@ -44,7 +47,11 @@ public class AutoHandler {
     }
 
     private Command simpleTrajCommand(String name) {
-        return autoFactory.trajectoryCmd(name).withName(name);
+        return Commands.sequence(
+            // MUST reset odometry before running a traj or else the robot will start from 0, 0 coords
+            autoFactory.resetOdometry(name),
+            autoFactory.trajectoryCmd(name)
+        ).withName(name + "_Sequence");
     }
 
     private void register(String title, Command autoCommand) {

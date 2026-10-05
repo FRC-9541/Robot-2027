@@ -15,7 +15,7 @@ public class LEDPatterns {
     public static final LEDPattern GREEN = atNormalBrightness(LEDPattern.solid(Color.kGreen));
     public static final LEDPattern BLUE = atNormalBrightness(LEDPattern.solid(Color.kBlue));
 
-    public static final LEDPattern GOLD_BLUE_CHASE = atNormalBrightness(LEDPattern.gradient(GradientType.kDiscontinuous, Colors.MAIN_BLUE_COLOR, Colors.MAIN_GOLD_COLOR)
+    public static final LEDPattern GOLD_BLUE_CHASE = atNormalBrightness(LEDPattern.gradient(GradientType.kDiscontinuous, Colors.MAIN_GOLD_COLOR, Colors.MAIN_BLUE_COLOR)
       .scrollAtRelativeSpeed(Percent.per(Second).of(LED_SCROLL_SPEED)));
 
 

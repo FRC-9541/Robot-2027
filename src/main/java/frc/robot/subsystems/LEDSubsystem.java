@@ -20,16 +20,14 @@ public class LEDSubsystem extends SubsystemBase {
         this.catcherLED = new LEDStrip(LED_LENGTH, LEDPatterns.RED, ColorOrder.kGRB);
     }
 
-    public Command setCatcherPatternCommand(LEDPattern pattern) {
-        return setPatternCommand(pattern, catcherLED);
+    @Override
+    public void periodic() {
+        SmartDashboard.putString("LED Color", catcherLED.getDefaultColor());
+        catcherLED.update();
     }
 
-    public Command updateLEDsCommand() {
-        return run(() -> {
-            SmartDashboard.putString("LED Color", catcherLED.getDefaultColor());
-            catcherLED.update();
-        });
-    
+    public Command setCatcherPatternCommand(LEDPattern pattern) {
+        return setPatternCommand(pattern, catcherLED);
     }
 
     private Command setPatternCommand(LEDPattern pattern, LEDStrip ledStrip) {

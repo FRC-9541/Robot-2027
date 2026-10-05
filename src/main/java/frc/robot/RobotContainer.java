@@ -23,6 +23,7 @@ public class RobotContainer {
     // subsystems
     private final DriveSubsystem drive = new DriveSubsystem();
     private final LEDSubsystem led = new LEDSubsystem();
+    // TODO: shooter subsystem is temporary
     private final ShooterSubsystem shooter = new ShooterSubsystem();
 
     private final AutoHandler autoHandler = new AutoHandler(drive, led, shooter);
@@ -44,20 +45,18 @@ public class RobotContainer {
     }
 
     public void configureBindings() { // configure command bindings
+
+        // setup default commands for subsystems
         drive.setDefaultCommand(
             drive.driveWithControllerCommand(driver::getLeftY, driver::getRightY, driver::getRightX, driveChooser::getSelected)
         ); 
-
         shooter.setDefaultCommand(
             shooter.launchCommand(operator.getRightBumperButton(), operator.getRightBumperButtonPressed(), operator.getAButton(), operator.getYButton())
         );
 
-        led.setDefaultCommand(
-            led.updateLEDsCommand()
-        );
-
+        // set led pattern when teleop begins
         new Trigger(RobotState::isTeleop).onTrue(led.setCatcherPatternCommand(LEDPatterns.GOLD_BLUE_CHASE));
-    }
+    } 
 
     public Command getAutonomousCommand() {
         return autoHandler.getAutoRoutine();

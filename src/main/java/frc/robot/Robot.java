@@ -21,6 +21,7 @@ import frc.robot.util.Elastic.NotificationLevel;
 public class Robot extends TimedRobot {
 
 	// autonomous Command that is ran at the start of autonomous
+	// TODO: maybe move to RobotContainer using triggers
 	private Command autoCommand;
 
 	// robot code container
