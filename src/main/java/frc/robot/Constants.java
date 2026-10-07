@@ -14,11 +14,11 @@ public final class Constants {
 		// smaller values mean slower changes but larger means bigger.
 		// anything over 2 will stop this from working.
 		// this does not effect top speed
-		public static final double TANK_DRIVE_CONTROLLER_DAMPING = 0.6;
-		public static final double ARCADE_DRIVE_CONTROLLER_DAMPING = 0.5;
+		public static final double TANK_DRIVE_CONTROLLER_DAMPING = 1.2;
+		public static final double ARCADE_DRIVE_CONTROLLER_DAMPING = 1.2;
 		
 		// whether or not to use slew rate limiter while controller driving
-		public static final boolean USE_DRIVE_DAMPING = false;
+		public static final boolean USE_DRIVE_DAMPING = true;
 		
 		// Current limit for drivetrain motors. 60A is a
 		// reasonable maximum to reduce likelihood of
@@ -66,7 +66,7 @@ public final class Constants {
 		
 		public static final int LED_LENGTH = 92; 
 		public static final int LED_BRIGHTNESS_PERCENT = 70; // Can go up to 200%, might trip fuse through
-		public static final int LED_SCROLL_SPEED = 50; // In percent per second, so scrolls completely once every 2 seconds
+		public static final int LED_SCROLL_SPEED = 100/3; // In percent per second, so scrolls completely once every 3 seconds
 		// Every led strip must be plugged into this port
 		public static final int LED_PWM_PORT = 0;
 	}

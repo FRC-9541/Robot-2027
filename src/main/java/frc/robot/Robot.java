@@ -4,7 +4,9 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.util.Elastic;
@@ -21,6 +23,7 @@ import frc.robot.util.Elastic.NotificationLevel;
 public class Robot extends TimedRobot {
 
 	// autonomous Command that is ran at the start of autonomous
+	// TODO: maybe move to RobotContainer using triggers
 	private Command autoCommand;
 
 	// robot code container
@@ -33,10 +36,14 @@ public class Robot extends TimedRobot {
 	*/
 	public Robot() {
 		robot.configureBindings();
+		Elastic.sendNotification(new Elastic.Notification(Elastic.NotificationLevel.INFO, "robot start finished", "yippie"));
 	}
 
 	@Override
 	public void robotPeriodic() {
+		// put match time on the dashboard
+		SmartDashboard.putNumber("Match Time",  DriverStation.getMatchTime());
+
 		// for the commands to work
     	CommandScheduler.getInstance().run();
 	}
@@ -55,6 +62,9 @@ public class Robot extends TimedRobot {
   	}
 
 	@Override
+	public void autonomousPeriodic() {}
+
+	@Override
 	public void teleopInit() {
 		Elastic.selectTab(0);
 		// stops the auto command at the start of teleop so we can control
@@ -62,4 +72,19 @@ public class Robot extends TimedRobot {
       		autoCommand.cancel();
     	}
 	} 
+
+	@Override
+	public void teleopPeriodic() {}
+
+	@Override
+	public void disabledInit() {}
+
+	@Override
+	public void disabledPeriodic() {}
+
+	@Override
+	public void simulationInit() {}
+
+	@Override
+	public void simulationPeriodic() {}
 }

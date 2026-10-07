@@ -74,7 +74,7 @@ public class DriveSubsystem extends SubsystemBase {
 		driveConfig.voltageCompensation(12); // 12 volt motors
 		driveConfig.smartCurrentLimit(DRIVE_MOTOR_CURRENT_LIMIT);
 
-		// guesses
+		// complete guesses
 		// TODO: move to constants
 		double wheelDiameterMeters = 0.1524;
 		double gearRatio = 8.45;
@@ -92,10 +92,6 @@ public class DriveSubsystem extends SubsystemBase {
 		leftForwardDriveLead.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		driveConfig.inverted(true);
 		rightForwardDriveLead.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-		// Set the distance per pulse for the drive encoders. We can simply use the
-		// distance traveled for one rotation of the wheel divided by the encoder
-		// resolution.
 
 		leftEncoder.setPosition(0);
 		rightEncoder.setPosition(0);
@@ -120,9 +116,9 @@ public class DriveSubsystem extends SubsystemBase {
 		// refresh monitoring metrics on the user dashboard
 		field.setRobotPose(pose);
 		// TODO: change dashboard
-		SmartDashboard.putNumber("Odometry X (meters)", pose.getX());
-		SmartDashboard.putNumber("Odometry Y (meters)", pose.getY());
-		SmartDashboard.putNumber("Heading (degrees)", pose.getRotation().getDegrees());
+		SmartDashboard.putNumber("Odometry X (meters)",   (float) ((int) pose.getX() * 100) / 100F);
+		SmartDashboard.putNumber("Odometry Y (meters)", (float) ((int) pose.getY() * 100) / 100F);
+		SmartDashboard.putNumber("Heading (degrees)", (float) ((int) pose.getRotation().getDegrees() *100) / 100F);
 	}
 
 	private double calculateFilter(SlewRateLimiter filter, double value) {

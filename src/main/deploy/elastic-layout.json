@@ -1,0 +1,228 @@
+{
+  "version": 1.0,
+  "grid_size": 128,
+  "tabs": [
+    {
+      "name": "Teleoperated",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Camera",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 384.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/USB Camera 0",
+              "period": 0.06,
+              "rotation_turns": 0,
+              "compression": 11
+            }
+          },
+          {
+            "title": "Field",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 384.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Field",
+              "period": 0.06,
+              "field_game": "Rebuilt",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295,
+              "show_robot_outside_widget": true
+            }
+          },
+          {
+            "title": "LED Color",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Single Color View",
+            "properties": {
+              "topic": "/SmartDashboard/LED Color",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          },
+          {
+            "title": "Drive Choices",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Split Button Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Drive Choices",
+              "period": 0.06
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "Autonomous",
+      "grid_layout": {
+        "layouts": [],
+        "containers": [
+          {
+            "title": "Auto Choices",
+            "x": 1024.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "ComboBox Chooser",
+            "properties": {
+              "topic": "/SmartDashboard/Auto Choices",
+              "period": 0.06,
+              "sort_options": false
+            }
+          },
+          {
+            "title": "Camera",
+            "x": 512.0,
+            "y": 0.0,
+            "width": 512.0,
+            "height": 384.0,
+            "type": "Camera Stream",
+            "properties": {
+              "topic": "/CameraPublisher/USB Camera 0",
+              "period": 0.06,
+              "rotation_turns": 0
+            }
+          },
+          {
+            "title": "Field",
+            "x": 0.0,
+            "y": 128.0,
+            "width": 512.0,
+            "height": 256.0,
+            "type": "Field",
+            "properties": {
+              "topic": "/SmartDashboard/Field",
+              "period": 0.06,
+              "field_game": "Rebuilt",
+              "robot_width": 0.85,
+              "robot_length": 0.85,
+              "show_other_objects": true,
+              "show_trajectories": true,
+              "field_rotation": 0.0,
+              "robot_color": 4294198070,
+              "trajectory_color": 4294967295,
+              "show_robot_outside_widget": true
+            }
+          },
+          {
+            "title": "Odometry X (meters)",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Odometry X (meters)",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "Odometry Y (meters)",
+            "x": 128.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Odometry Y (meters)",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "Heading (degrees)",
+            "x": 256.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/SmartDashboard/Heading (degrees)",
+              "period": 0.06,
+              "data_type": "double"
+            }
+          },
+          {
+            "title": "Alliance Color",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/FMSInfo/IsRedAlliance",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4293729316,
+              "false_color": 4278216371,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "StationNumber",
+            "x": 1280.0,
+            "y": 128.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Large Text Display",
+            "properties": {
+              "topic": "/FMSInfo/StationNumber",
+              "period": 0.06,
+              "data_type": "int"
+            }
+          },
+          {
+            "title": "Camera Connected",
+            "x": 1024.0,
+            "y": 128.0,
+            "width": 256.0,
+            "height": 128.0,
+            "type": "Boolean Box",
+            "properties": {
+              "topic": "/CameraPublisher/USB Camera 0/connected",
+              "period": 0.06,
+              "data_type": "boolean",
+              "true_color": 4283215696,
+              "false_color": 4294198070,
+              "true_icon": "None",
+              "false_icon": "None"
+            }
+          },
+          {
+            "title": "LED Color",
+            "x": 1024.0,
+            "y": 256.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "Single Color View",
+            "properties": {
+              "topic": "/SmartDashboard/LED Color",
+              "period": 0.06,
+              "data_type": "string"
+            }
+          }
+        ]
+      }
+    }
+  ]
+}
