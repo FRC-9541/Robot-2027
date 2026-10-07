@@ -54,7 +54,9 @@ public class RobotContainer {
             shooter.launchCommand(operator.getRightBumperButton(), operator.getRightBumperButtonPressed(), operator.getAButton(), operator.getYButton())
         );
 
-        // set led pattern when teleop begins
+        // set led pattern when modes begin
+        new Trigger(RobotState::isDisabled).onTrue(led.setCatcherPatternCommand(LEDPatterns.RED));
+        new Trigger(RobotState::isAutonomous).onTrue(led.setCatcherPatternCommand(LEDPatterns.GREEN));
         new Trigger(RobotState::isTeleop).onTrue(led.setCatcherPatternCommand(LEDPatterns.GOLD_BLUE_CHASE));
     } 
 

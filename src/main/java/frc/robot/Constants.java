@@ -14,11 +14,11 @@ public final class Constants {
 		// smaller values mean slower changes but larger means bigger.
 		// anything over 2 will stop this from working.
 		// this does not effect top speed
-		public static final double TANK_DRIVE_CONTROLLER_DAMPING = 0.6;
-		public static final double ARCADE_DRIVE_CONTROLLER_DAMPING = 0.5;
+		public static final double TANK_DRIVE_CONTROLLER_DAMPING = 1.2;
+		public static final double ARCADE_DRIVE_CONTROLLER_DAMPING = 1.2;
 		
 		// whether or not to use slew rate limiter while controller driving
-		public static final boolean USE_DRIVE_DAMPING = false;
+		public static final boolean USE_DRIVE_DAMPING = true;
 		
 		// Current limit for drivetrain motors. 60A is a
 		// reasonable maximum to reduce likelihood of

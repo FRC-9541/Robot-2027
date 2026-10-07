@@ -22,8 +22,6 @@ public class LEDStrip {
 	
     public LEDStrip(int bufferLength, LEDPattern startPattern, ColorOrder order) {
 
-		pattern = startPattern;
-
 		led = new AddressableLED(LED_PWM_PORT);
 
 		// Length is expensive to set, so only set it once, then just update data
@@ -33,10 +31,13 @@ public class LEDStrip {
 		// allow for other color orders (like grb instead of rgb)
 		led.setColorOrder(order);
 
-		// Set the data, will not work without it being updated
+		// set pattern to the one given
+		setPattern(startPattern);
+
+		// update the data, will not tick without it being updated
 		update();
 		led.start();
-
+		
     }
 
 	public void update() {
@@ -47,6 +48,7 @@ public class LEDStrip {
     public void setPattern(LEDPattern pattern) {
         // apply and set data
         this.pattern = pattern;
+		update();
 	}   
 
 	public String getDefaultColor() {

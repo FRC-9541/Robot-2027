@@ -162,7 +162,7 @@
             }
           },
           {
-            "title": "IsRedAlliance",
+            "title": "Alliance Color",
             "x": 384.0,
             "y": 0.0,
             "width": 128.0,
@@ -172,23 +172,10 @@
               "topic": "/FMSInfo/IsRedAlliance",
               "period": 0.06,
               "data_type": "boolean",
-              "true_color": 4283215696,
-              "false_color": 4294198070,
+              "true_color": 4293729316,
+              "false_color": 4278216371,
               "true_icon": "None",
               "false_icon": "None"
-            }
-          },
-          {
-            "title": "FMSControlData",
-            "x": 1152.0,
-            "y": 128.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/FMSInfo/FMSControlData",
-              "period": 0.06,
-              "data_type": "int"
             }
           },
           {
@@ -205,10 +192,10 @@
             }
           },
           {
-            "title": "connected",
+            "title": "Camera Connected",
             "x": 1024.0,
             "y": 128.0,
-            "width": 128.0,
+            "width": 256.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
