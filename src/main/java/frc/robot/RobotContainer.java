@@ -56,8 +56,8 @@ public class RobotContainer {
 
         // set led pattern when modes begin
         new Trigger(RobotState::isDisabled).onTrue(led.setCatcherPatternCommand(LEDPatterns.RED));
-        new Trigger(RobotState::isAutonomous).onTrue(led.setCatcherPatternCommand(LEDPatterns.GREEN));
-        new Trigger(RobotState::isTeleop).onTrue(led.setCatcherPatternCommand(LEDPatterns.GOLD_BLUE_CHASE));
+        new Trigger(RobotState::isAutonomous).onTrue(led.setCatcherPatternCommand(LEDPatterns.SNAKE));
+        new Trigger(RobotState::isTeleop).onTrue(led.setCatcherPatternCommand(LEDPatterns.GOLD_BLUE_SCROLL));
     } 
 
     public Command getAutonomousCommand() {

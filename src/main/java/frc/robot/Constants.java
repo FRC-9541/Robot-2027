@@ -1,6 +1,7 @@
 package frc.robot;
 
 /* All static constants should go into this class for ease of changing */
+// TODO: discuss if this class is needed or if constants should get moved to the class they are primarily used in
 public final class Constants {
 	public static final class DriveConstants {
 		// Motor controller IDs for drivetrain motors

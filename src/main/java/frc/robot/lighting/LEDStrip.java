@@ -18,7 +18,7 @@ public class LEDStrip {
 	// buffer and led objects
 	private AddressableLEDBuffer ledBuffer;
 	private AddressableLED led;
-	private LEDPattern pattern;
+	private LEDPattern pattern; // pattern variable is unnecessary but is useful in case of error/tracking
 	
     public LEDStrip(int bufferLength, LEDPattern startPattern, ColorOrder order) {
 
@@ -39,6 +39,10 @@ public class LEDStrip {
 		led.start();
 		
     }
+
+	public LEDPattern getPattern() {
+		return pattern;
+	}
 
 	public void update() {
 		pattern.applyTo(ledBuffer);
