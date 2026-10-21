@@ -1,7 +1,12 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Degrees;
+import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
+
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
 
 /* All static constants should go into this class for ease of changing */
 // TODO: discuss if this class is needed or if constants should get moved to the class they are primarily used in
@@ -40,7 +45,7 @@ public final class Constants {
 		public static final double DRIVE_SCALE = .78;
 		public static final double ROTATION_SCALE = .7;
 
-		public static class DriveTrainConstants {
+		public static class DrivetrainConstants {
 			public static final double WHEEL_DIAMETER = Inches.of(6).abs(Meters); // using the units classes for readability, before it was just a weird number
 			public static final double GEAR_RATIO = 8.45; // scale factor that the motor encoder needs to multiplied by to get right distance
 			public static final double POSITION_FACTOR = (Math.PI * WHEEL_DIAMETER) / GEAR_RATIO; // conversion factor used by drive encoders during config
