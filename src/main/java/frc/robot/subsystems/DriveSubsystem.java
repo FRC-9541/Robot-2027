@@ -88,10 +88,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 		// refresh monitoring metrics on the user dashboard
 		field.setRobotPose(pose);
-		// TODO: change dashboard
-		SmartDashboard.putNumber("Odometry X (meters)",   (float) ((int) pose.getX() * 100) / 100F);
-		SmartDashboard.putNumber("Odometry Y (meters)", (float) ((int) pose.getY() * 100) / 100F);
-		SmartDashboard.putNumber("Heading (degrees)", (float) ((int) pose.getRotation().getDegrees() *100) / 100F);
 	}
 
 	public void configDrive() {

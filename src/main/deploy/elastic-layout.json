@@ -24,9 +24,9 @@
           {
             "title": "Field",
             "x": 0.0,
-            "y": 0.0,
+            "y": 128.0,
             "width": 512.0,
-            "height": 384.0,
+            "height": 256.0,
             "type": "Field",
             "properties": {
               "topic": "/SmartDashboard/Field",
@@ -65,6 +65,34 @@
             "properties": {
               "topic": "/SmartDashboard/Drive Choices",
               "period": 0.06
+            }
+          },
+          {
+            "title": "FMSInfo",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "FMSInfo",
+            "properties": {
+              "topic": "/FMSInfo",
+              "period": 0.06
+            }
+          },
+          {
+            "title": "Match Time",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "/SmartDashboard/Match Time",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 20,
+              "yellow_start_time": 30
             }
           }
         ]
@@ -123,48 +151,9 @@
             }
           },
           {
-            "title": "Odometry X (meters)",
-            "x": 0.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Odometry X (meters)",
-              "period": 0.06,
-              "data_type": "double"
-            }
-          },
-          {
-            "title": "Odometry Y (meters)",
-            "x": 128.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Odometry Y (meters)",
-              "period": 0.06,
-              "data_type": "double"
-            }
-          },
-          {
-            "title": "Heading (degrees)",
-            "x": 256.0,
-            "y": 0.0,
-            "width": 128.0,
-            "height": 128.0,
-            "type": "Large Text Display",
-            "properties": {
-              "topic": "/SmartDashboard/Heading (degrees)",
-              "period": 0.06,
-              "data_type": "double"
-            }
-          },
-          {
             "title": "Alliance Color",
-            "x": 384.0,
-            "y": 0.0,
+            "x": 1024.0,
+            "y": 128.0,
             "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
@@ -193,9 +182,9 @@
           },
           {
             "title": "Camera Connected",
-            "x": 1024.0,
+            "x": 1152.0,
             "y": 128.0,
-            "width": 256.0,
+            "width": 128.0,
             "height": 128.0,
             "type": "Boolean Box",
             "properties": {
@@ -219,6 +208,34 @@
               "topic": "/SmartDashboard/LED Color",
               "period": 0.06,
               "data_type": "string"
+            }
+          },
+          {
+            "title": "Match Time",
+            "x": 384.0,
+            "y": 0.0,
+            "width": 128.0,
+            "height": 128.0,
+            "type": "Match Time",
+            "properties": {
+              "topic": "/SmartDashboard/Match Time",
+              "period": 0.06,
+              "data_type": "double",
+              "time_display_mode": "Minutes and Seconds",
+              "red_start_time": 20,
+              "yellow_start_time": 30
+            }
+          },
+          {
+            "title": "FMSInfo",
+            "x": 0.0,
+            "y": 0.0,
+            "width": 384.0,
+            "height": 128.0,
+            "type": "FMSInfo",
+            "properties": {
+              "topic": "/FMSInfo",
+              "period": 0.06
             }
           }
         ]

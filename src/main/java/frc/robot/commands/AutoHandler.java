@@ -35,11 +35,8 @@ public class AutoHandler {
         register("Move 1 Meter Forward",
             drive.driveDistanceCommand(0.2, Meters.of(1)).withName("move1MeterForward"));
 
-        register("TEST DON'T USE",
-            simpleTrajCommand("NewPath"));
-
-        register("test Choreo Command, moveForwardAndTurn", 
-           simpleTrajCommand("moveForwardAndTurn"));
+        register("test Choreo: turnRight", 
+           simpleTrajCommand("turnRight"));
 
         SmartDashboard.putData("Auto Choices", autoChooser);
     }
