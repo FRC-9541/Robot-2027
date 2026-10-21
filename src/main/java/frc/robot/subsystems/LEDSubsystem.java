@@ -12,25 +12,25 @@ import frc.robot.lighting.LEDStrip;
 
 public class LEDSubsystem extends SubsystemBase {
 
-    // led strip on the catching bin
-    public final LEDStrip catcherLED;
+	// led strip on the catching bin
+	public final LEDStrip catcherLED;
 
-    public LEDSubsystem() {
-        super();
-        this.catcherLED = new LEDStrip(LED_LENGTH, LEDPatterns.RED, ColorOrder.kGRB);
-    }
+	public LEDSubsystem() {
+		super();
+		this.catcherLED = new LEDStrip(LED_LENGTH, LEDPatterns.RED, ColorOrder.kGRB);
+	}
 
-    @Override
-    public void periodic() {
-        SmartDashboard.putString("LED Color", catcherLED.getDefaultColor());
-        catcherLED.update();
-    }
+	@Override
+	public void periodic() {
+		SmartDashboard.putString("LED Color", catcherLED.getDefaultColor());
+		catcherLED.update();
+	}
 
-    public Command setCatcherPatternCommand(LEDPattern pattern) {
-        return setPatternCommand(pattern, catcherLED);
-    }
+	public Command setCatcherPatternCommand(LEDPattern pattern) {
+		return setPatternCommand(pattern, catcherLED);
+	}
 
-    private Command setPatternCommand(LEDPattern pattern, LEDStrip ledStrip) {
-        return runOnce(() -> ledStrip.setPattern(pattern));
-    }
+	private Command setPatternCommand(LEDPattern pattern, LEDStrip ledStrip) {
+		return runOnce(() -> ledStrip.setPattern(pattern));
+	}
 }

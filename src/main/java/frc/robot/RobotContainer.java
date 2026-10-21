@@ -20,47 +20,47 @@ import static frc.robot.Constants.OperatingConstants.*;
 
 public class RobotContainer {
 
-    // subsystems
-    private final DriveSubsystem drive = new DriveSubsystem();
-    private final LEDSubsystem led = new LEDSubsystem();
-    // TODO: shooter subsystem is temporary
-    private final ShooterSubsystem shooter = new ShooterSubsystem();
+	// subsystems
+	private final DriveSubsystem drive = new DriveSubsystem();
+	private final LEDSubsystem led = new LEDSubsystem();
+	// TODO: shooter subsystem is temporary
+	private final ShooterSubsystem shooter = new ShooterSubsystem();
 
-    private final AutoHandler autoHandler = new AutoHandler(drive, led, shooter);
+	private final AutoHandler autoHandler = new AutoHandler(drive, led, shooter);
 
-    // TODO: 2027 doesn't support SendableChooser so change to Selectable
-    private final SendableChooser<Boolean> driveChooser = new SendableChooser<>();
+	// TODO: 2027 doesn't support SendableChooser so change to Selectable
+	private final SendableChooser<Boolean> driveChooser = new SendableChooser<>();
 
 	// actual controllers use by driver and operator, can't be accessed during disabled
 	private final CommandXboxController driver = new CommandXboxController(DRIVER_CONTROLLER_PORT);
 	private final XboxController operator = new XboxController(OPERATOR_CONTROLLER_PORT);
 
-    public RobotContainer() {
-        CameraServer.startAutomaticCapture();
-        WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
+	public RobotContainer() {
+		CameraServer.startAutomaticCapture();
+		WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
-        driveChooser.setDefaultOption("Default: Arcade Drive", true);
+		driveChooser.setDefaultOption("Default: Arcade Drive", true);
 		driveChooser.addOption("Tank Drive", false);
-        SmartDashboard.putData("Drive Choices", driveChooser);
-    }
+		SmartDashboard.putData("Drive Choices", driveChooser);
+	}
 
-    public void configureBindings() { // configure command bindings
+	public void configureBindings() { // configure command bindings
 
-        // setup default commands for subsystems
-        drive.setDefaultCommand(
-            drive.driveWithControllerCommand(driver::getLeftY, driver::getRightY, driver::getRightX, driveChooser::getSelected)
-        ); 
-        shooter.setDefaultCommand(
-            shooter.launchCommand(operator.getRightBumperButton(), operator.getRightBumperButtonPressed(), operator.getAButton(), operator.getYButton())
-        );
+		// setup default commands for subsystems
+		drive.setDefaultCommand(
+			drive.driveWithControllerCommand(driver::getLeftY, driver::getRightY, driver::getRightX, driveChooser::getSelected)
+		); 
+		shooter.setDefaultCommand(
+			shooter.launchCommand(operator.getRightBumperButton(), operator.getRightBumperButtonPressed(), operator.getAButton(), operator.getYButton())
+		);
 
-        // set led pattern when modes begin
-        new Trigger(RobotState::isDisabled).onTrue(led.setCatcherPatternCommand(LEDPatterns.RED));
-        new Trigger(RobotState::isAutonomous).onTrue(led.setCatcherPatternCommand(LEDPatterns.SNAKE));
-        new Trigger(RobotState::isTeleop).onTrue(led.setCatcherPatternCommand(LEDPatterns.GOLD_BLUE_SCROLL));
-    } 
+		// set led pattern when modes begin
+		new Trigger(RobotState::isDisabled).onTrue(led.setCatcherPatternCommand(LEDPatterns.RED));
+		new Trigger(RobotState::isAutonomous).onTrue(led.setCatcherPatternCommand(LEDPatterns.SNAKE));
+		new Trigger(RobotState::isTeleop).onTrue(led.setCatcherPatternCommand(LEDPatterns.GOLD_BLUE_SCROLL));
+	} 
 
-    public Command getAutonomousCommand() {
-        return autoHandler.getAutoRoutine();
-    }
+	public Command getAutonomousCommand() {
+		return autoHandler.getAutoRoutine();
+	}
 }

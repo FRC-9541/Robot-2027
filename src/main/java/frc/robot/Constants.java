@@ -85,4 +85,18 @@ public final class Constants {
 		// Every led strip must be plugged into this port
 		public static final int LED_PWM_PORT = 0;
 	}
+
+	public static final class CameraConstants {
+		public static final String MAIN_CAMERA_ID = "front"; // Camera name
+		public static final Pose3d MAIN_CAMERA_POSE3D = new Pose3d(
+			Feet.of(0), // x offset from bottom center of robot
+			Feet.of(0), // y offset
+			Feet.of(0), // z offset
+			new Rotation3d(
+				Degrees.of(0),// roll offset
+				Degrees.of(0), // pitch offset
+				Degrees.of(0) // yaw offset
+				)
+			);
+	}
 }
