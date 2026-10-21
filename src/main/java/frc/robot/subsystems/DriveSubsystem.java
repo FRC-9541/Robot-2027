@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.DriveConstants.*;
-import static frc.robot.Constants.DriveConstants.DriveTrainConstants.*;
+import static frc.robot.Constants.DriveConstants.DrivetrainConstants.*;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
@@ -65,7 +65,7 @@ public class DriveSubsystem extends SubsystemBase {
 		super();
 
 		configDrive();
-		
+
 		leftLeadMotor.getEncoder().setPosition(0);
 		rightLeadMotor.getEncoder().setPosition(0);
 
@@ -100,6 +100,7 @@ public class DriveSubsystem extends SubsystemBase {
 			.smartCurrentLimit(DRIVE_MOTOR_CURRENT_LIMIT)
 			.encoder.positionConversionFactor(POSITION_FACTOR);
 
+		
 		SparkMaxConfig leftLeadConfig = new SparkMaxConfig().apply(globalConfig);
 		SparkMaxConfig leftFollowConfig = new SparkMaxConfig().apply(globalConfig);
 		leftLeadConfig.inverted(false);
@@ -107,7 +108,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 		leftLeadMotor.configure(leftLeadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 		leftFollowMotor.configure(leftFollowConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
 
 		SparkMaxConfig rightLeadConfig = new SparkMaxConfig().apply(globalConfig);
 		SparkMaxConfig rightFollowConfig = new SparkMaxConfig().apply(globalConfig);

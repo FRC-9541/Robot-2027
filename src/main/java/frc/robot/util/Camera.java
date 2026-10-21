@@ -23,15 +23,12 @@ public class Camera {
 	
 	public static void init() {
 		try {
-			// 1. Load the official AprilTag layout for the current season
 			AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadFromResource(
 			AprilTagFields.k2026RebuiltAndymark.m_resourceFile
 			);
 			
-			// 2. Define camera offset relative to robot center (adjust in Constants)
 			Transform3d robotToCam = new Transform3d(); 
 			
-			// 3. FIX: Modern constructor only takes 2 arguments
 			poseEstimator = new PhotonPoseEstimator(fieldLayout, robotToCam);
 			
 		} catch (IOException e) {

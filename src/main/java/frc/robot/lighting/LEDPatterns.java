@@ -3,7 +3,6 @@ package frc.robot.lighting;
 import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Second;
 import static frc.robot.Constants.LEDConstants.*;
-import static frc.robot.Constants.OperatingConstants.DRIVER_CONTROLLER_PORT;
 
 import java.util.Map;
  
