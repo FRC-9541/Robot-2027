@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import com.revrobotics.PersistMode;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.ResetMode;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
@@ -17,6 +16,7 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.units.measure.Distance;
 import edu.wpi.first.wpilibj.ADIS16470_IMU;
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -24,85 +24,58 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
+import static edu.wpi.first.units.Units.Meters;
 import static edu.wpi.first.units.Units.Seconds;
 import static frc.robot.Constants.DriveConstants.*;
+import static frc.robot.Constants.DriveConstants.DriveTrainConstants.*;
 
 import java.util.function.BooleanSupplier;
 import java.util.function.DoubleSupplier;
 
-// all drive related objects and code should be contained in this class
+/* all drive related objects and code should be contained in this class */
 public class DriveSubsystem extends SubsystemBase {
 
-	// get SparkMaxes
-	// TODO: rename spark maxes to have better naming scheme
-	private final SparkMax leftForwardDriveLead = new SparkMax(LEFT_FORWARD_ID, MotorType.kBrushed);
-	private final SparkMax leftBackDriveFollower = new SparkMax(LEFT_BACK_ID, MotorType.kBrushed);
-	private final SparkMax rightForwardDriveLead = new SparkMax(RIGHT_FORWARD_ID, MotorType.kBrushed);
-	private final SparkMax rightBackDriveFollower = new SparkMax(RIGHT_BACK_ID, MotorType.kBrushed);
+	// NOTE: lead spark maxes are the towards the front of the robot, and followers are to the back
+	private final SparkMax leftLeadMotor = new SparkMax(LEFT_FORWARD_ID, MotorType.kBrushed);
+	private final SparkMax leftFollowMotor = new SparkMax(LEFT_BACK_ID, MotorType.kBrushed);
+	private final SparkMax rightLeadMotor = new SparkMax(RIGHT_FORWARD_ID, MotorType.kBrushed);
+	private final SparkMax rightFollowMotor = new SparkMax(RIGHT_BACK_ID, MotorType.kBrushed);
 
-	// get encoders from spark maxes
-	private final RelativeEncoder leftEncoder = leftForwardDriveLead.getEncoder();
-	private final RelativeEncoder rightEncoder = rightForwardDriveLead.getEncoder();
-
-	// get gyro
 	private final ADIS16470_IMU gyro = new ADIS16470_IMU();
 
-	private final DifferentialDriveOdometry odometry;
-	private Pose2d pose = new Pose2d();
-	private final Field2d field = new Field2d();
+	
 
 	// will be controlling the movement of the bot
-	// values given the drivetrain will stay until another value is given, so for
-	// example if you set it to (0.7, 0.6) it will
-	// keep driving until it get set to zero
-	private final DifferentialDrive drivetrain = new DifferentialDrive(leftForwardDriveLead, rightForwardDriveLead);;
+	// keeps driving until it gets set to zero
+	private final DifferentialDrive drivetrain = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
+	
+	private final LTVUnicycleController controller = new LTVUnicycleController(0.02);
+	private final DifferentialDriveOdometry odometry;
+	private final Field2d field = new Field2d();
+	private Pose2d pose = new Pose2d();
+
 
 	// slew rate limiters stop a value from increasing more then the value set
 	private SlewRateLimiter tankLeftFilter = new SlewRateLimiter(TANK_DRIVE_CONTROLLER_DAMPING);
 	private SlewRateLimiter tankRightFilter = new SlewRateLimiter(TANK_DRIVE_CONTROLLER_DAMPING);
 	private SlewRateLimiter arcadeFilter = new SlewRateLimiter(ARCADE_DRIVE_CONTROLLER_DAMPING);
 
-	private final LTVUnicycleController controller = new LTVUnicycleController(0.02);
 
 	public DriveSubsystem() {
 		super();
 
-		this.drivetrain.setMaxOutput(DRIVE_SCALE);
+		configDrive();
 		
-		// register driveConfig, values here can be finicky so blame this before others
-		SparkMaxConfig driveConfig = new SparkMaxConfig();
-		driveConfig.voltageCompensation(12); // 12 volt motors
-		driveConfig.smartCurrentLimit(DRIVE_MOTOR_CURRENT_LIMIT);
-
-		// complete guesses
-		// TODO: move to constants
-		double wheelDiameterMeters = 0.1524;
-		double gearRatio = 8.45;
-		double positionConversionFactor = (Math.PI * wheelDiameterMeters) / gearRatio;
-		driveConfig.encoder.positionConversionFactor(positionConversionFactor);
-
-		// TODO: split drive config into left and right for readability
-		driveConfig.follow(leftForwardDriveLead);
-		leftBackDriveFollower.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		driveConfig.follow(rightForwardDriveLead);
-		rightBackDriveFollower.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-		driveConfig.disableFollowerMode();
-		driveConfig.inverted(false);
-		leftForwardDriveLead.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		driveConfig.inverted(true);
-		rightForwardDriveLead.configure(driveConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-
-		leftEncoder.setPosition(0);
-		rightEncoder.setPosition(0);
+		leftLeadMotor.getEncoder().setPosition(0);
+		rightLeadMotor.getEncoder().setPosition(0);
 
 		gyro.calibrate(); // takes a few seconds, make sure the robot is still
 		gyro.reset();
 
 		odometry = new DifferentialDriveOdometry(
 				getRobotRotation2d(),
-				leftEncoder.getPosition(),
-				rightEncoder.getPosition(),
+				leftLeadMotor.getEncoder().getPosition(),
+				rightLeadMotor.getEncoder().getPosition(),
 				new Pose2d(0.0, 0.0, new Rotation2d()) // sets starting tracking position to X:0, Y:0
 		);
 		// TODO: change dashboard in 2027
@@ -111,7 +84,7 @@ public class DriveSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		pose = odometry.update(getRobotRotation2d(), leftEncoder.getPosition(), rightEncoder.getPosition());
+		pose = odometry.update(getRobotRotation2d(), leftLeadMotor.getEncoder().getPosition(), rightLeadMotor.getEncoder().getPosition());
 
 		// refresh monitoring metrics on the user dashboard
 		field.setRobotPose(pose);
@@ -121,8 +94,35 @@ public class DriveSubsystem extends SubsystemBase {
 		SmartDashboard.putNumber("Heading (degrees)", (float) ((int) pose.getRotation().getDegrees() *100) / 100F);
 	}
 
+	public void configDrive() {
+		
+		// scale all movement so robot is capped at a certain max speed for safety
+		this.drivetrain.setMaxOutput(DRIVE_SCALE);
+		
+		SparkMaxConfig globalConfig = new SparkMaxConfig();
+		globalConfig.voltageCompensation(DRIVE_MOTOR_VOLTAGE)
+			.smartCurrentLimit(DRIVE_MOTOR_CURRENT_LIMIT)
+			.encoder.positionConversionFactor(POSITION_FACTOR);
+
+		SparkMaxConfig leftLeadConfig = new SparkMaxConfig().apply(globalConfig);
+		SparkMaxConfig leftFollowConfig = new SparkMaxConfig().apply(globalConfig);
+		leftLeadConfig.inverted(false);
+		leftFollowConfig.follow(leftLeadMotor);
+
+		leftLeadMotor.configure(leftLeadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		leftFollowMotor.configure(leftFollowConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+
+
+		SparkMaxConfig rightLeadConfig = new SparkMaxConfig().apply(globalConfig);
+		SparkMaxConfig rightFollowConfig = new SparkMaxConfig().apply(globalConfig);
+		rightLeadConfig.inverted(true);
+		rightFollowConfig.follow(rightLeadMotor);
+
+		rightLeadMotor.configure(rightLeadConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+		rightFollowMotor.configure(rightFollowConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
+	}
+
 	private double calculateFilter(SlewRateLimiter filter, double value) {
-		// if damping, return calculated, else return value
 		return USE_DRIVE_DAMPING ? filter.calculate(value) : value;
 	}
 
@@ -139,7 +139,7 @@ public class DriveSubsystem extends SubsystemBase {
             ff.vxMetersPerSecond,
             ff.omegaRadiansPerSecond
         );
-        DifferentialDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds); // 
+        DifferentialDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
         drivetrain.tankDrive(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
     }
 
@@ -154,20 +154,21 @@ public class DriveSubsystem extends SubsystemBase {
 	public Command driveWithControllerCommand(DoubleSupplier leftY, DoubleSupplier rightY, DoubleSupplier rightX, BooleanSupplier arcadeDrive) {
     	return run(() -> {
         	if (arcadeDrive.getAsBoolean()) {
-            	drivetrain.arcadeDrive(calculateFilter(arcadeFilter, leftY.getAsDouble()), rightX.getAsDouble());
+            	drivetrain.arcadeDrive(calculateFilter(arcadeFilter, -leftY.getAsDouble()), -rightX.getAsDouble());
         	} else {
-            	drivetrain.tankDrive(calculateFilter(tankLeftFilter, leftY.getAsDouble()), calculateFilter(tankRightFilter, rightY.getAsDouble()));
+            	drivetrain.tankDrive(calculateFilter(tankLeftFilter, -leftY.getAsDouble()), calculateFilter(tankRightFilter, -rightY.getAsDouble()));
         	}
     	}).withName("driveWithController");
 	}
 
-	public Command driveDistanceCommand(double speed, double distanceMeters) {
-		double left = leftEncoder.getPosition();
-		double right = rightEncoder.getPosition();
+	// TODO: not functioning, could be a issue that has now been fixed, but make sure
+	public Command driveDistanceCommand(double speed, Distance distance) {
+		double leftSnapshot = leftLeadMotor.getEncoder().getPosition();
+		double rightSnapshot = rightLeadMotor.getEncoder().getPosition();
 
 		return arcadeDriveCommand(speed, 0)
 			.until(() -> {
-				return Math.max(leftEncoder.getPosition() - left, rightEncoder.getPosition() - right) >= distanceMeters;
+				return Math.max(leftLeadMotor.getEncoder().getPosition() - leftSnapshot, rightLeadMotor.getEncoder().getPosition() - rightSnapshot) >= distance.abs(Meters);
 			})
 		
 			.finallyDo(interrupted -> drivetrain.stopMotor()) // stop motor when it ends

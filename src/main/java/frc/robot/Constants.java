@@ -1,5 +1,8 @@
 package frc.robot;
 
+import static edu.wpi.first.units.Units.Inches;
+import static edu.wpi.first.units.Units.Meters;
+
 /* All static constants should go into this class for ease of changing */
 // TODO: discuss if this class is needed or if constants should get moved to the class they are primarily used in
 public final class Constants {
@@ -15,9 +18,11 @@ public final class Constants {
 		// smaller values mean slower changes but larger means bigger.
 		// anything over 2 will stop this from working.
 		// this does not effect top speed
-		public static final double TANK_DRIVE_CONTROLLER_DAMPING = 1.2;
-		public static final double ARCADE_DRIVE_CONTROLLER_DAMPING = 1.2;
+		public static final double TANK_DRIVE_CONTROLLER_DAMPING = 1.0;
+		public static final double ARCADE_DRIVE_CONTROLLER_DAMPING = 1.0;
 		
+		public static final int DRIVE_MOTOR_VOLTAGE = 12; 
+
 		// whether or not to use slew rate limiter while controller driving
 		public static final boolean USE_DRIVE_DAMPING = true;
 		
@@ -26,12 +31,21 @@ public final class Constants {
 		// tripping breakers or damaging CIM motors
 		public static final int DRIVE_MOTOR_CURRENT_LIMIT = 60;
 
+
+
 				
 		// Sets scale value for controller movement, only arcade uses rotation scale
 		public static final double SLOW_DRIVE_SCALE = .5;
 		public static final double SLOW_ROTATION_SCALE = .6;
 		public static final double DRIVE_SCALE = .78;
 		public static final double ROTATION_SCALE = .7;
+
+		public static class DriveTrainConstants {
+			public static final double WHEEL_DIAMETER = Inches.of(6).abs(Meters); // using the units classes for readability, before it was just a weird number
+			public static final double GEAR_RATIO = 8.45; // scale factor that the motor encoder needs to multiplied by to get right distance
+			public static final double POSITION_FACTOR = (Math.PI * WHEEL_DIAMETER) / GEAR_RATIO; // conversion factor used by drive encoders during config
+		}
+
 	}
 
 	public static final class ShooterConstants {

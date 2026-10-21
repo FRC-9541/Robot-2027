@@ -1,5 +1,7 @@
 package frc.robot.commands;
 
+import static edu.wpi.first.units.Units.Meters;
+
 import choreo.auto.AutoFactory;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -31,7 +33,7 @@ public class AutoHandler {
             Commands.none().withName("nothing"));
 
         register("Move 1 Meter Forward",
-            drive.driveDistanceCommand(0.2, 1).withName("move1MeterForward"));
+            drive.driveDistanceCommand(0.2, Meters.of(1)).withName("move1MeterForward"));
 
         register("TEST DON'T USE",
             simpleTrajCommand("NewPath"));
