@@ -5,7 +5,6 @@ import static edu.wpi.first.units.Units.Feet;
 import static edu.wpi.first.units.Units.Inches;
 import static edu.wpi.first.units.Units.Meters;
 
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -37,10 +36,7 @@ public final class Constants {
 		// reasonable maximum to reduce likelihood of
 		// tripping breakers or damaging CIM motors
 		public static final int DRIVE_MOTOR_CURRENT_LIMIT = 60;
-
-
-
-				
+		
 		// Sets scale value for controller movement, only arcade uses rotation scale
 		public static final double SLOW_DRIVE_SCALE = .5;
 		public static final double SLOW_ROTATION_SCALE = .6;

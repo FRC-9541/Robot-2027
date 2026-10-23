@@ -60,8 +60,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 
 	public DriveSubsystem() {
-		super();
-
 		configDrive();
 
 		leftLeadMotor.getEncoder().setPosition(0);
@@ -89,7 +87,6 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void configDrive() {
-		
 		// scale all movement so robot is capped at a certain max speed for safety
 		this.drivetrain.setMaxOutput(DRIVE_SCALE);
 		

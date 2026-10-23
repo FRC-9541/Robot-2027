@@ -1,4 +1,4 @@
-package frc.robot.lighting;
+package frc.robot.subsystems.led;
 
 import edu.wpi.first.wpilibj.util.Color;
 

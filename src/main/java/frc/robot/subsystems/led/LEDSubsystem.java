@@ -1,4 +1,4 @@
-package frc.robot.subsystems;
+package frc.robot.subsystems.led;
 
 import static frc.robot.Constants.LEDConstants.*;
 
@@ -7,16 +7,12 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.AddressableLED.ColorOrder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.lighting.LEDPatterns;
-import frc.robot.lighting.LEDStrip;
 
 public class LEDSubsystem extends SubsystemBase {
-
 	// led strip on the catching bin
 	public final LEDStrip catcherLED;
 
 	public LEDSubsystem() {
-		super();
 		this.catcherLED = new LEDStrip(LED_LENGTH, LEDPatterns.RED, ColorOrder.kGRB);
 	}
 

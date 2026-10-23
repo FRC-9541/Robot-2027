@@ -1,4 +1,4 @@
-package frc.robot.util;
+package frc.robot.subsystems.vision;
 
 import static frc.robot.Constants.CameraConstants.MAIN_CAMERA_ID;
 import static frc.robot.Constants.CameraConstants.MAIN_CAMERA_LOCATION;
@@ -15,13 +15,13 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 
-/* util class to help with photon vision processing */
-public class Vision {
+/* class to help with photon vision processing */
+public class VisionProcessor {
 	public final PhotonCamera mainCamera = new PhotonCamera(MAIN_CAMERA_ID);
 	public PhotonPoseEstimator poseEstimator;
 	public Pose2d estPose2d = new Pose2d();
 
-	public Vision() {
+	public VisionProcessor() {
 		try {
 			AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadFromResource(
 				AprilTagFields.k2026RebuiltAndymark.m_resourceFile
@@ -34,10 +34,8 @@ public class Vision {
 		}
 	}
 	
-	public Pose2d getEstimatedPose2d() {
-		if (poseEstimator == null) {
-			return estPose2d;
-		}
+	public void calculateEstimatedPose2d() {
+		if (poseEstimator == null) return;
 		
 		Optional<EstimatedRobotPose> visionEst = Optional.empty();
 		
@@ -52,7 +50,9 @@ public class Vision {
 				estPose2d = visionEst.get().estimatedPose.toPose2d();
 			}
 		}
-		
+	}
+
+	public Pose2d getPose2d() {
 		return estPose2d;
 	}
 }

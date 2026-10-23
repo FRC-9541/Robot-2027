@@ -1,4 +1,4 @@
-package frc.robot.lighting;
+package frc.robot.subsystems.led;
 
 import static edu.wpi.first.units.Units.Percent;
 import static edu.wpi.first.units.Units.Second;
