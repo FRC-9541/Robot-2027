@@ -43,8 +43,6 @@ public class DriveSubsystem extends SubsystemBase {
 
 	private final ADIS16470_IMU gyro = new ADIS16470_IMU();
 
-	
-
 	// will be controlling the movement of the bot
 	// keeps driving until it gets set to zero
 	private final DifferentialDrive drivetrain = new DifferentialDrive(leftLeadMotor, rightLeadMotor);

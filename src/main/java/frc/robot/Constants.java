@@ -7,6 +7,8 @@ import static edu.wpi.first.units.Units.Meters;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 
 /* All static constants should go into this class for ease of changing */
 // TODO: discuss if this class is needed or if constants should get moved to the class they are primarily used in
@@ -93,10 +95,12 @@ public final class Constants {
 
 	public static final class CameraConstants {
 		public static final String MAIN_CAMERA_ID = "front"; // Camera name
-		public static final Pose3d MAIN_CAMERA_POSE3D = new Pose3d(
-			Feet.of(0), // x offset from bottom center of robot
-			Feet.of(0), // y offset
-			Feet.of(0), // z offset
+		public static final Transform3d MAIN_CAMERA_LOCATION = new Transform3d(
+			new Translation3d(
+				Feet.of(0), // x offset from bottom center of robot
+				Feet.of(0), // y offset
+				Feet.of(0) // z offset
+			),
 			new Rotation3d(
 				Degrees.of(0),// roll offset
 				Degrees.of(0), // pitch offset
