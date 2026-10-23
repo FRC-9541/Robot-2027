@@ -15,6 +15,7 @@ import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ShooterSubsystem;
 import frc.robot.subsystems.led.LEDPatterns;
 import frc.robot.subsystems.led.LEDSubsystem;
+import frc.robot.subsystems.vision.VisionSubsystem;
 
 import static frc.robot.Constants.OperatingConstants.*;
 
@@ -25,6 +26,7 @@ public class RobotContainer {
 	private final LEDSubsystem led = new LEDSubsystem();
 	// TODO: shooter subsystem is temporary
 	private final ShooterSubsystem shooter = new ShooterSubsystem();
+	private final VisionSubsystem vision = new VisionSubsystem();
 
 	private final AutoHandler autoHandler = new AutoHandler(drive, led, shooter);
 
