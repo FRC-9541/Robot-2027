@@ -11,7 +11,6 @@ public class VisionSubsystem extends SubsystemBase {
 
     public VisionSubsystem() {
         SmartDashboard.putData("Vision Field", field);
-        
     }
 
     @Override
@@ -24,7 +23,4 @@ public class VisionSubsystem extends SubsystemBase {
         return vision.getPose2d();
     }
 
-
 }
-    
-

@@ -24,34 +24,44 @@ public class VisionProcessor {
 	public VisionProcessor() {
 		try {
 			AprilTagFieldLayout fieldLayout = AprilTagFieldLayout.loadFromResource(
-				AprilTagFields.k2026RebuiltAndymark.m_resourceFile
-			);
-			
+					AprilTagFields.k2026RebuiltAndymark.m_resourceFile);
+
 			poseEstimator = new PhotonPoseEstimator(fieldLayout, MAIN_CAMERA_LOCATION);
-			
+
 		} catch (IOException e) {
 			DriverStation.reportError("Failed to load AprilTagFieldLayout: " + e.getMessage(), e.getStackTrace());
 		}
 	}
-	
+
+	/**
+	 * Calculate the estimated pose gotten from the camera.
+	 * It should get called periodicity to be accurate.
+	 * Pose can be gotten from {@link #getPose2d()}.
+	 */
 	public void calculateEstimatedPose2d() {
-		if (poseEstimator == null) return;
-		
+		if (poseEstimator == null)
+			return;
+
 		Optional<EstimatedRobotPose> visionEst = Optional.empty();
-		
+
 		for (var result : mainCamera.getAllUnreadResults()) {
 			visionEst = poseEstimator.estimateCoprocMultiTagPose(result);
-			
+
 			if (visionEst.isEmpty()) {
 				visionEst = poseEstimator.estimateLowestAmbiguityPose(result);
 			}
-			
+
 			if (visionEst.isPresent()) {
 				estPose2d = visionEst.get().estimatedPose.toPose2d();
 			}
 		}
 	}
 
+	/**
+	 * Pose that the camera sees. 
+	 * Only updates with {@link #calculateEstimatedPose2d()}.
+	 * @return Pose2d of the robot.
+	 */
 	public Pose2d getPose2d() {
 		return estPose2d;
 	}

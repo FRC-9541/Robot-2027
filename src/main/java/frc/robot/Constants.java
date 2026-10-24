@@ -18,7 +18,7 @@ public final class Constants {
 		public static final int LEFT_BACK_ID = 4;
 		public static final int RIGHT_FORWARD_ID = 6;
 		public static final int RIGHT_BACK_ID = 7;
-			
+
 		// how much a controller value (from -1 to 1) can change in a second, for
 		// driving.
 		// smaller values mean slower changes but larger means bigger.
@@ -26,17 +26,17 @@ public final class Constants {
 		// this does not effect top speed
 		public static final double TANK_DRIVE_CONTROLLER_DAMPING = 1.0;
 		public static final double ARCADE_DRIVE_CONTROLLER_DAMPING = 1.0;
-		
-		public static final int DRIVE_MOTOR_VOLTAGE = 12; 
+
+		public static final int DRIVE_MOTOR_VOLTAGE = 12;
 
 		// whether or not to use slew rate limiter while controller driving
 		public static final boolean USE_DRIVE_DAMPING = true;
-		
+
 		// Current limit for drivetrain motors. 60A is a
 		// reasonable maximum to reduce likelihood of
 		// tripping breakers or damaging CIM motors
 		public static final int DRIVE_MOTOR_CURRENT_LIMIT = 60;
-		
+
 		// Sets scale value for controller movement, only arcade uses rotation scale
 		public static final double SLOW_DRIVE_SCALE = .5;
 		public static final double SLOW_ROTATION_SCALE = .6;
@@ -44,47 +44,54 @@ public final class Constants {
 		public static final double ROTATION_SCALE = .7;
 
 		public static class DrivetrainConstants {
-			public static final double WHEEL_DIAMETER = Inches.of(6).abs(Meters); // using the units classes for readability, before it was just a weird number
-			public static final double GEAR_RATIO = 8.45; // scale factor that the motor encoder needs to multiplied by to get right distance
-			public static final double POSITION_FACTOR = (Math.PI * WHEEL_DIAMETER) / GEAR_RATIO; // conversion factor used by drive encoders during config
+			// using the units classes for readability, before it was just a weird number
+			private static final double WHEEL_DIAMETER = Inches.of(6).abs(Meters);
+			// scale factor that the motor encoder needs to multiplied by to get right
+			// distance
+			private static final double GEAR_RATIO = 8.45;
+			// conversion factor used by drive encoders during config
+			public static final double POSITION_FACTOR = (Math.PI * WHEEL_DIAMETER) / GEAR_RATIO;
 		}
 
 	}
 
 	public static final class ShooterConstants {
-    // Motor controller IDs for fuel mechanism motors
-    public static final int LEFT_LAUNCH_MOTOR_ID = 2;
-    public static final int RIGHT_LAUNCH_MOTOR_ID = 3;
+		// Motor controller IDs for fuel mechanism motors
+		public static final int LEFT_LAUNCH_MOTOR_ID = 2;
+		public static final int RIGHT_LAUNCH_MOTOR_ID = 3;
 
-    // Current limit and nominal voltage for fuel mechanism motors
-    public static final int LEFT_LAUNCH_CURRENT_LIMIT = 60;
-    public static final int RIGHT_LAUNCH_CURRENT_LIMIT = 60;
+		// Current limit and nominal voltage for fuel mechanism motors
+		public static final int LEFT_LAUNCH_CURRENT_LIMIT = 60;
+		public static final int RIGHT_LAUNCH_CURRENT_LIMIT = 60;
 
-    // Voltages for fuel stages
-    public static final double SPINUP_LEFT_VOLTAGE = 1;
-    public static final double SPINUP_RIGHT_VOLTAGE = -6;
-    public static final double INTAKING_LEFT_VOLTAGE = -9;
-    public static final double INTAKING_RIGHT_VOLTAGE = -12;
-    public static final double LAUNCHING_LEFT_VOLTAGE = -10.6;
-    public static final double LAUNCHING_RIGHT_VOLTAGE = 9;
+		// Voltages for fuel stages
+		public static final double SPINUP_LEFT_VOLTAGE = 1;
+		public static final double SPINUP_RIGHT_VOLTAGE = -6;
+		public static final double INTAKING_LEFT_VOLTAGE = -9;
+		public static final double INTAKING_RIGHT_VOLTAGE = -12;
+		public static final double LAUNCHING_LEFT_VOLTAGE = -10.6;
+		public static final double LAUNCHING_RIGHT_VOLTAGE = 9;
 
-    public static final double SPINUP_SECONDS = 1;
-    public static final double SHOOT_SECONDS = 11; // Includes the SPINUP time for an actual (SHOOT minus SPINUP) seconds
-  }
-	
+		public static final double SPINUP_SECONDS = 1;
+		public static final double SHOOT_SECONDS = 11; // Includes the SPINUP time for an actual (SHOOT minus SPINUP)
+														// seconds
+	}
+
 	public static final class OperatingConstants {
 		// Ports in driver station that each controller should go to
 		public static final int DRIVER_CONTROLLER_PORT = 0;
 		public static final int OPERATOR_CONTROLLER_PORT = 1;
 	}
-	
+
 	public static final class LEDConstants {
 		// Second blinking rate for drive mode while not in teleop
 		public static final double LED_BLINKING_RATE = 1;
-		
-		public static final int LED_LENGTH = 92; 
-		public static final int LED_BRIGHTNESS_PERCENT = 70; // Can go up to 200%, might trip fuse through
-		public static final int LED_SCROLL_SPEED = 100/3; // In percent per second, so scrolls completely once every 3 seconds
+
+		public static final int LED_LENGTH = 92;
+		// Can go up to 200%, might trip fuse through
+		public static final int LED_BRIGHTNESS_PERCENT = 70;
+		// In percent per second, so scrolls completely once every blank seconds
+		public static final int LED_SCROLL_SPEED = 100 / 3;
 		// Every led strip must be plugged into this port
 		public static final int LED_PWM_PORT = 0;
 	}
@@ -92,16 +99,15 @@ public final class Constants {
 	public static final class CameraConstants {
 		public static final String MAIN_CAMERA_ID = "front"; // Camera name
 		public static final Transform3d MAIN_CAMERA_LOCATION = new Transform3d(
-			new Translation3d(
-				Feet.of(0), // x offset from bottom center of robot
-				Feet.of(0), // y offset
-				Feet.of(0) // z offset
-			),
-			new Rotation3d(
-				Degrees.of(0),// roll offset
-				Degrees.of(0), // pitch offset
-				Degrees.of(0) // yaw offset
-				)
-			);
+				new Translation3d(
+						Feet.of(0), // x offset from bottom center of robot
+						Feet.of(0), // y offset
+						Feet.of(0) // z offset
+				),
+				new Rotation3d(
+						Degrees.of(0), // roll offset
+						Degrees.of(0), // pitch offset
+						Degrees.of(0) // yaw offset
+				));
 	}
 }

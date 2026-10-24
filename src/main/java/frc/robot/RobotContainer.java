@@ -1,8 +1,6 @@
 package frc.robot;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.net.WebServer;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.RobotState;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -39,7 +37,6 @@ public class RobotContainer {
 
 	public RobotContainer() {
 		CameraServer.startAutomaticCapture();
-		WebServer.start(5800, Filesystem.getDeployDirectory().getPath());
 
 		driveChooser.setDefaultOption("Default: Arcade Drive", true);
 		driveChooser.addOption("Tank Drive", false);
@@ -47,7 +44,6 @@ public class RobotContainer {
 	}
 
 	public void configureBindings() { // configure command bindings
-
 		// setup default commands for subsystems
 		drive.setDefaultCommand(
 			drive.driveWithControllerCommand(driver::getLeftY, driver::getRightY, driver::getRightX, driveChooser::getSelected)

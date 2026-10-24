@@ -14,12 +14,12 @@ import frc.robot.util.Elastic.Notification;
 import frc.robot.util.Elastic.NotificationLevel;
 
 /**
-* The methods in this class are called automatically corresponding to each
-* mode, as described in
-* the TimedRobot documentation. If you change the name of this class or the
-* package after creating
-* this project, you must also update the Main.java file in the project.
-*/
+ * The methods in this class are called automatically corresponding to each
+ * mode, as described in
+ * the TimedRobot documentation. If you change the name of this class or the
+ * package after creating
+ * this project, you must also update the Main.java file in the project.
+ */
 public class Robot extends TimedRobot {
 
 	// autonomous Command that is ran at the start of autonomous
@@ -30,72 +30,81 @@ public class Robot extends TimedRobot {
 	private final RobotContainer robot = new RobotContainer();
 
 	/*
-	* This function is ran when the robot is first started up and should be used
-	* for any
-	* initialization code
-	*/
+	 * This function is ran when the robot is first started up and should be used
+	 * for any
+	 * initialization code
+	 */
 	public Robot() {
 		robot.configureBindings();
 
 		// nothing wrong over here
-		/* 
-		File juanFile = new File(Filesystem.getDeployDirectory(), "juan.jpg");
-        
-		if (!juanFile.exists()) {
-            System.out.println("Juan was not found, terminating and eviscerating juan and the program");
-			System.exit(1)
-        }
-		*/
+		/*
+		 * File juanFile = new File(Filesystem.getDeployDirectory(), "juan.jpg");
+		 * 
+		 * if (!juanFile.exists()) {
+		 * System.out.
+		 * println("Juan was not found, terminating and eviscerating juan and the program"
+		 * );
+		 * System.exit(1)
+		 * }
+		 */
 
-		Elastic.sendNotification(new Elastic.Notification(Elastic.NotificationLevel.INFO, "robot start finished", "yippie"));
+		Elastic.sendNotification(
+				new Elastic.Notification(Elastic.NotificationLevel.INFO, "robot start finished", "yippie"));
 	}
 
 	@Override
 	public void robotPeriodic() {
 		// put match time on the dashboard
-		SmartDashboard.putNumber("Match Time",  DriverStation.getMatchTime());
+		SmartDashboard.putNumber("Match Time", DriverStation.getMatchTime());
 
 		// for the commands to work
-    	CommandScheduler.getInstance().run();
+		CommandScheduler.getInstance().run();
 	}
 
 	@Override
 	public void autonomousInit() {
 		Elastic.selectTab(1);
 		autoCommand = robot.getAutonomousCommand();
-		Elastic.sendNotification(new Notification(NotificationLevel.INFO, "Starting Auto", "Running Auto Command: " + (autoCommand == null ? "Null" : autoCommand.getName()), 5000));
-
+		Elastic.sendNotification(new Notification(NotificationLevel.INFO, "Starting Auto",
+				"Running Auto Command: " + (autoCommand == null ? "Null" : autoCommand.getName()), 5000));
 
 		// starts auto command if it exists
-    	if (autoCommand != null) {
-      		CommandScheduler.getInstance().schedule(autoCommand);
-    	}
-  	}
+		if (autoCommand != null) {
+			CommandScheduler.getInstance().schedule(autoCommand);
+		}
+	}
 
 	@Override
-	public void autonomousPeriodic() {}
+	public void autonomousPeriodic() {
+	}
 
 	@Override
 	public void teleopInit() {
 		Elastic.selectTab(0);
 		// stops the auto command at the start of teleop so we can control
-    	if (autoCommand != null) {
-      		autoCommand.cancel();
-    	}
-	} 
+		if (autoCommand != null) {
+			autoCommand.cancel();
+		}
+	}
 
 	@Override
-	public void teleopPeriodic() {}
+	public void teleopPeriodic() {
+	}
 
 	@Override
-	public void disabledInit() {}
+	public void disabledInit() {
+	}
 
 	@Override
-	public void disabledPeriodic() {}
+	public void disabledPeriodic() {
+	}
 
 	@Override
-	public void simulationInit() {}
+	public void simulationInit() {
+	}
 
 	@Override
-	public void simulationPeriodic() {}
+	public void simulationPeriodic() {
+	}
 }

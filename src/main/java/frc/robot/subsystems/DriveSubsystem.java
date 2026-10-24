@@ -46,18 +46,16 @@ public class DriveSubsystem extends SubsystemBase {
 	// will be controlling the movement of the bot
 	// keeps driving until it gets set to zero
 	private final DifferentialDrive drivetrain = new DifferentialDrive(leftLeadMotor, rightLeadMotor);
-	
+
 	private final LTVUnicycleController controller = new LTVUnicycleController(0.02);
 	private final DifferentialDriveOdometry odometry;
 	private final Field2d field = new Field2d();
 	private Pose2d pose = new Pose2d();
 
-
 	// slew rate limiters stop a value from increasing more then the value set
 	private SlewRateLimiter tankLeftFilter = new SlewRateLimiter(TANK_DRIVE_CONTROLLER_DAMPING);
 	private SlewRateLimiter tankRightFilter = new SlewRateLimiter(TANK_DRIVE_CONTROLLER_DAMPING);
 	private SlewRateLimiter arcadeFilter = new SlewRateLimiter(ARCADE_DRIVE_CONTROLLER_DAMPING);
-
 
 	public DriveSubsystem() {
 		configDrive();
@@ -80,7 +78,8 @@ public class DriveSubsystem extends SubsystemBase {
 
 	@Override
 	public void periodic() {
-		pose = odometry.update(getRobotRotation2d(), leftLeadMotor.getEncoder().getPosition(), rightLeadMotor.getEncoder().getPosition());
+		pose = odometry.update(getRobotRotation2d(), leftLeadMotor.getEncoder().getPosition(),
+				rightLeadMotor.getEncoder().getPosition());
 
 		// refresh monitoring metrics on the user dashboard
 		field.setRobotPose(pose);
@@ -89,13 +88,11 @@ public class DriveSubsystem extends SubsystemBase {
 	public void configDrive() {
 		// scale all movement so robot is capped at a certain max speed for safety
 		this.drivetrain.setMaxOutput(DRIVE_SCALE);
-		
+
 		SparkMaxConfig globalConfig = new SparkMaxConfig();
 		globalConfig.voltageCompensation(DRIVE_MOTOR_VOLTAGE)
-			.smartCurrentLimit(DRIVE_MOTOR_CURRENT_LIMIT)
-			.encoder.positionConversionFactor(POSITION_FACTOR);
+				.smartCurrentLimit(DRIVE_MOTOR_CURRENT_LIMIT).encoder.positionConversionFactor(POSITION_FACTOR);
 
-		
 		SparkMaxConfig leftLeadConfig = new SparkMaxConfig().apply(globalConfig);
 		SparkMaxConfig leftFollowConfig = new SparkMaxConfig().apply(globalConfig);
 		leftLeadConfig.inverted(false);
@@ -118,21 +115,20 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public void followTrajectory(DifferentialSample sample) {
-        // Get the velocity feedforward specified by the sample
-        ChassisSpeeds ff = sample.getChassisSpeeds();
+		// Get the velocity feedforward specified by the sample
+		ChassisSpeeds ff = sample.getChassisSpeeds();
 
 		DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(Units.inchesToMeters(27.0));
 
-        // Generate the next speeds for the robot
-        ChassisSpeeds speeds = controller.calculate(
-            pose,
-            sample.getPose(),
-            ff.vxMetersPerSecond,
-            ff.omegaRadiansPerSecond
-        );
-        DifferentialDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
-        drivetrain.tankDrive(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
-    }
+		// Generate the next speeds for the robot
+		ChassisSpeeds speeds = controller.calculate(
+				pose,
+				sample.getPose(),
+				ff.vxMetersPerSecond,
+				ff.omegaRadiansPerSecond);
+		DifferentialDriveWheelSpeeds wheelSpeeds = kinematics.toWheelSpeeds(speeds);
+		drivetrain.tankDrive(wheelSpeeds.leftMetersPerSecond, wheelSpeeds.rightMetersPerSecond);
+	}
 
 	public Pose2d getPose() {
 		return pose;
@@ -143,13 +139,14 @@ public class DriveSubsystem extends SubsystemBase {
 	}
 
 	public Command driveWithControllerCommand(DoubleSupplier leftY, DoubleSupplier rightY, DoubleSupplier rightX, BooleanSupplier arcadeDrive) {
-    	return run(() -> {
-        	if (arcadeDrive.getAsBoolean()) {
-            	drivetrain.arcadeDrive(calculateFilter(arcadeFilter, -leftY.getAsDouble()), -rightX.getAsDouble());
-        	} else {
-            	drivetrain.tankDrive(calculateFilter(tankLeftFilter, -leftY.getAsDouble()), calculateFilter(tankRightFilter, -rightY.getAsDouble()));
-        	}
-    	}).withName("driveWithController");
+		return run(() -> {
+			if (arcadeDrive.getAsBoolean()) {
+				drivetrain.arcadeDrive(calculateFilter(arcadeFilter, -leftY.getAsDouble()), -rightX.getAsDouble());
+			} else {
+				drivetrain.tankDrive(calculateFilter(tankLeftFilter, -leftY.getAsDouble()),
+						calculateFilter(tankRightFilter, -rightY.getAsDouble()));
+			}
+		}).withName("driveWithController");
 	}
 
 	// TODO: not functioning, could be a issue that has now been fixed, but make sure
@@ -158,23 +155,23 @@ public class DriveSubsystem extends SubsystemBase {
 		double rightSnapshot = rightLeadMotor.getEncoder().getPosition();
 
 		return arcadeDriveCommand(speed, 0)
-			.until(() -> {
-				return Math.max(leftLeadMotor.getEncoder().getPosition() - leftSnapshot, rightLeadMotor.getEncoder().getPosition() - rightSnapshot) >= distance.abs(Meters);
-			})
-		
-			.finallyDo(interrupted -> drivetrain.stopMotor()) // stop motor when it ends
-		
-			.withTimeout(Seconds.of(1)) // may need to get changed, on the safer side
-			.withName("driveDistance");
+				.until(() -> {
+					return Math.max(leftLeadMotor.getEncoder().getPosition() - leftSnapshot,
+							rightLeadMotor.getEncoder().getPosition() - rightSnapshot) >= distance.abs(Meters);
+				})
+
+				.finallyDo(interrupted -> drivetrain.stopMotor()) // stop motor when it ends
+
+				.withTimeout(Seconds.of(1)) // may need to get changed, on the safer side
+				.withName("driveDistance");
 	}
 
 	public Command arcadeDriveCommand(double speed, double rotation) {
-		return run(() -> drivetrain.arcadeDrive(speed, rotation))		
-		.withName("arcadeDrive");
+		return run(() -> drivetrain.arcadeDrive(speed, rotation))
+				.withName("arcadeDrive");
 	}
 
-	// tank drive is where one value controls one side of the movement, and the
-	// other controls the other
+	// tank drive is where one value controls one side of the movement, and vice versa
 	public Command tankDriveCommand(double left, double right) {
 		return run(() -> drivetrain.tankDrive(left, right)).withName("tankDrive");
 	}

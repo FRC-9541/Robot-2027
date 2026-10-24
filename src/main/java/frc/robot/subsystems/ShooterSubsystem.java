@@ -21,21 +21,19 @@ public class ShooterSubsystem extends SubsystemBase {
 	private final SparkMax rightBinIntakeExpel = new SparkMax(RIGHT_LAUNCH_MOTOR_ID, MotorType.kBrushed);
 
 	private final Timer spinUpTimer = new Timer();
-	
-	public ShooterSubsystem() {
 
+	public ShooterSubsystem() {
 		// set config for motors
 		SparkMaxConfig leftConfig = new SparkMaxConfig();
 		leftConfig.smartCurrentLimit(60);
 		leftConfig.inverted(false);
 		leftIntakeShootExpel.configure(leftConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
-		
+
 		SparkMaxConfig rightConfig = new SparkMaxConfig();
 		rightConfig.smartCurrentLimit(60);
 		rightConfig.inverted(false);
 		rightBinIntakeExpel.configure(rightConfig, ResetMode.kResetSafeParameters, PersistMode.kPersistParameters);
 	}
-
 
 	// very poor code but its fine cus its gonna get removed
 	public Command launchCommand(boolean rightBumper, boolean rightBumperPressed, boolean aButton, boolean yButton) {
