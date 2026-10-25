@@ -1,5 +1,4 @@
-***
-
+<img src="https://img.shields.io/github/commit-activity/w/FRC-9541/Robot-2027" alt="GitHub commit activity"/> <img src="https://img.shields.io/github/languages/code-size/FRC-9541/Robot-2027" alt="GitHub code size"/>
 <h2>Team 9541 - Robot Name TBD</h2>
 <p>Our command-based robot code for the BIOCORE season, coded in Java.</p>
 <h3>Helpful Links:</h3>
